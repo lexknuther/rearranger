@@ -1,0 +1,37 @@
+<idea-plugin>
+	<id>com.wrq.rearranger</id>
+	<name>Rearranger (2020)</name>
+	<vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+	<description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+	<!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+		 on how to target different products -->
+	<depends>com.intellij.modules.platform</depends>
+	<depends>com.intellij.modules.java</depends>
+	<extensions defaultExtensionNs="com.intellij">
+		<applicationConfigurable provider="com.wrq.rearranger.RearrangerProvider"/>
+		<applicationService serviceInterface="com.wrq.rearranger.Rearranger"
+							serviceImplementation="com.wrq.rearranger.RearrangerImplementation"/>
+	</extensions>
+	<actions>
+		<action id="Rearranger2020" class="com.wrq.rearranger.RearrangerAction" text="Rearranger (2020)"
+				description="Rearrange class and class member declarations according to a user-specified order.">
+			<keyboard-shortcut first-keystroke="control alt shift R" keymap="$default"/>
+			<add-to-group group-id="EditorPopupMenu" anchor="last"/>
+			<add-to-group group-id="EditMenu" anchor="last"/>
+		</action>
+		<action id="RearrangeProjectTree" class="com.wrq.rearranger.ProjectTreeActionHandler" text="Rearranger (2020)"
+				description="Rearrange class and class member declarations according to a user-specified order.">
+			<!--            <add-to-group group-id="EditMenu" anchor="last"/>      -->
+			<add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+		</action>
+		<action id="LiveRearranger2020" class="com.wrq.rearranger.LiveRearrangerAction" text="Live Rearranger (2020)"
+				description="Permits user to manually rearrange class and class member declarations.">
+			<keyboard-shortcut first-keystroke="ctrl COMMA" keymap="$default"/>
+			<add-to-group group-id="EditorPopupMenu" anchor="last"/>
+			<add-to-group group-id="EditMenu" anchor="last"/>
+		</action>
+	</actions>
+</idea-plugin>

@@ -22,7 +22,6 @@
 package com.wrq.rearranger;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.wrq.rearranger.configuration.RearrangerSettingsPanel;
 import com.wrq.rearranger.settings.RearrangerSettings;
@@ -40,7 +39,7 @@ import org.jdom.Element;
  * whenever the rearranger plugin is invoked on a Java file, the order of declarations is rearranged according to the
  * configuration.
  */
-public class RearrangerImplementation implements Configurable, JDOMExternalizable, Rearranger {
+public class RearrangerImplementation implements JDOMExternalizable, Rearranger {
 
 // ------------------------------ FIELDS ------------------------------
 

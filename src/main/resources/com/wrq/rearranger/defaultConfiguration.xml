@@ -237,7 +237,7 @@
 			</Method>
 			<Comment condition="2" nPrecedingRulesToMatch="1" nSubsequentRulesToMatch="1" allPrecedingRules="true"
 					 allSubsequentRules="true" fillString="" useProjectWidthForFill="true"
-					 fillWidth="0">\n//\ ------------------------\ INTERFACE\ METHODS\ ------------------------\n</Comment>
+					 fillWidth="0">\n//\ ------------------------\ INTERFACE\ METHODS\ ------------------------</Comment>
 			<Interface alphabetizeInterfaces="true" noExtractedMethods="true" methodOrder="1" priority="1" fillString=""
 					   useProjectWidthForFill="true" fillWidth="0">
 				<NameMatch match="false" invert="false" pattern=""/>

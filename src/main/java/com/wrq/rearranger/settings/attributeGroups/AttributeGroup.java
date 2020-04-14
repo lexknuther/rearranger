@@ -26,13 +26,12 @@ import org.jdom.Element;
 /**
  * Methods implemented by rule objects, which are saved in configuration.
  */
-public interface AttributeGroup
-		extends IRule {
+public interface AttributeGroup extends IRule {
 
 // -------------------------- OTHER METHODS --------------------------
 
 	AttributeGroup deepCopy();
 
-	void writeExternal(final Element parent);
+	void writeExternal(Element parent);
 
 }

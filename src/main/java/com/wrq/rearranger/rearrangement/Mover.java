@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Moves (rearranges) classes and class members according to rules specified by the user.
  */
-public final class Mover {
+public class Mover {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -41,9 +41,7 @@ public final class Mover {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	public Mover(
-			final List<ClassContentsEntry> outerClasses,
-			final RearrangerSettings settings) {
+	public Mover(List<ClassContentsEntry> outerClasses, RearrangerSettings settings) {
 		this.outerClasses = new ArrayList<ClassContentsEntry>(outerClasses);
 		this.settings = settings;
 	}
@@ -51,11 +49,8 @@ public final class Mover {
 // -------------------------- OTHER METHODS --------------------------
 
 	public List<IRuleInstance> rearrangeOuterClasses() {
-		final GenericRearranger outerClassRearranger = new GenericRearranger(
-				settings.getClassOrderAttributeList(),
-				outerClasses,
-				0,
-				settings
+		GenericRearranger outerClassRearranger = new GenericRearranger(
+				settings.getClassOrderAttributeList(), outerClasses, 0, settings
 		) {
 
 			/**

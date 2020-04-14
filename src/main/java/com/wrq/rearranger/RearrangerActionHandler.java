@@ -48,6 +48,7 @@ import com.wrq.rearranger.rearrangement.Parser;
 import com.wrq.rearranger.rearrangement.Spacer;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.CommentUtil;
 import java.awt.dnd.DragSource;
 
@@ -105,7 +106,7 @@ public class RearrangerActionHandler extends EditorActionHandler {
 
 		application.runWriteAction(() -> {
 					Rearranger rearranger = application.getService(Rearranger.class);
-					RearrangerSettings settings = rearranger.getSettings();
+					RearrangerSettings settings = rearranger.getState();
 
 					runWriteActionRearrangement(project, document, psiFile, settings);
 				}
@@ -125,11 +126,7 @@ public class RearrangerActionHandler extends EditorActionHandler {
 	/**
 	 * must be called from within an IDEA write-action thread.
 	 */
-	void runWriteActionRearrangement(
-			final Project project,
-			final Document document,
-			final PsiFile psiFile,
-			final RearrangerSettings settings) {
+	void runWriteActionRearrangement(Project project, Document document, PsiFile psiFile, RearrangerSettings settings) {
 		/**
 		 * Per instructions from IntelliJ, we have to commit any changes to the document to the Psi
 		 * tree.

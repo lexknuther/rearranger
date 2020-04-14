@@ -21,11 +21,9 @@
  */
 package com.wrq.rearranger.settings.atomicAttributes;
 
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -61,46 +59,43 @@ public abstract class StringAttribute extends AtomicAttribute {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-	public final String getExpression() {
+	public String getExpression() {
 		return expression;
 	}
 
-	public final void setExpression(final String expression) {
+	public void setExpression(final String expression) {
 		this.expression = expression;
 	}
 
-	public final JPanel getStringPanel() {
-		final JPanel stringPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints();
+	public JPanel getStringPanel() {
+		JPanel stringPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints();
+
 		constraints.weightedLastRow();
-		final JCheckBox enableBox = new JCheckBox("whose " + attributeDisplayName);
+
+		JCheckBox enableBox = new JCheckBox("whose " + attributeDisplayName);
+
 		stringPanel.add(enableBox, constraints.firstCol());
-		final JComboBox invertBox = new JComboBox(new Object[]{"match", "do not match"});
+
+		JComboBox invertBox = new JComboBox(new Object[]{"match", "do not match"});
+
 		invertBox.setSelectedIndex(isInvert() ? 1 : 0);
-		final JTextField patternField = new JTextField(20);
+
+		JTextField patternField = new JTextField(20);
+
 		stringPanel.add(invertBox, constraints.nextCol());
 		stringPanel.add(patternField, constraints.weightedLastCol());
 		enableBox.setSelected(isMatch());
 		invertBox.setEnabled(isMatch());
 		patternField.setEnabled(isMatch());
 		patternField.setText(getExpression());
-		enableBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setMatch(enableBox.isSelected());
-				invertBox.setEnabled(enableBox.isSelected());
-				patternField.setEnabled(enableBox.isSelected());
-			}
-
+		enableBox.addActionListener(e -> {
+			setMatch(enableBox.isSelected());
+			invertBox.setEnabled(enableBox.isSelected());
+			patternField.setEnabled(enableBox.isSelected());
 		});
-		invertBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setInvert(invertBox.getSelectedIndex() == 1);
-			}
-
+		invertBox.addActionListener(e -> {
+			setInvert(invertBox.getSelectedIndex() == 1);
 		});
 		patternField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -123,20 +118,20 @@ public abstract class StringAttribute extends AtomicAttribute {
 		return stringPanel;
 	}
 
-	public final boolean isInvert() {
+	public boolean isInvert() {
 		return invert;
 	}
 
-	private void setInvert(final boolean invert) {
-		this.invert = invert;
+	public void setInvert(boolean value) {
+		invert = value;
 	}
 
 	public final boolean isMatch() {
 		return match;
 	}
 
-	public final void setMatch(final boolean match) {
-		this.match = match;
+	public final void setMatch(boolean value) {
+		match = value;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -145,7 +140,8 @@ public abstract class StringAttribute extends AtomicAttribute {
 		if (!(object instanceof StringAttribute)) {
 			return false;
 		}
-		final StringAttribute na = (StringAttribute) object;
+		StringAttribute na = (StringAttribute) object;
+
 		return match == na.match &&
 				(expression == null || na.expression == null ?
 						expression == null && na.expression == null : expression.equals(na.expression)) &&
@@ -154,8 +150,9 @@ public abstract class StringAttribute extends AtomicAttribute {
 
 // -------------------------- OTHER METHODS --------------------------
 
-	public final void appendAttributes(final Element me) {
-		final Element stElement = new Element(storageName);
+	public void appendAttributes(final Element me) {
+		Element stElement = new Element(storageName);
+
 		if (expression == null) {
 			expression = "";
 		}
@@ -165,13 +162,13 @@ public abstract class StringAttribute extends AtomicAttribute {
 		stElement.setAttribute("pattern", expression);
 	}
 
-	protected final void deepCopy(StringAttribute result) {
+	protected void deepCopy(StringAttribute result) {
 		result.match = match;
 		result.expression = expression;
 		result.invert = invert;
 	}
 
-	public final String getDescriptiveString() {
+	public String getDescriptiveString() {
 		return match ? "whose " +
 				attributeDisplayName +
 				(invert ? " do not match '" : " match '") +
@@ -179,14 +176,16 @@ public abstract class StringAttribute extends AtomicAttribute {
 				: "";
 	}
 
-	public final boolean isMatch(final String string) {
+	public boolean isMatch(final String string) {
 		return !match || string.matches(expression) ^ invert;
 	}
 
-	public final void loadAttributes(final Element item) {
-		match = RearrangerSettings.getBooleanAttribute(item, "match", false);
-		invert = RearrangerSettings.getBooleanAttribute(item, "invert", false);
-		final Attribute attr = RearrangerSettings.getAttribute(item, "pattern");
+	public void loadAttributes(final Element item) {
+		match = RearrangerSettingsImplementation.getBooleanAttribute(item, "match", false);
+		invert = RearrangerSettingsImplementation.getBooleanAttribute(item, "invert", false);
+
+		Attribute attr = RearrangerSettingsImplementation.getAttribute(item, "pattern");
+
 		expression = attr == null ? "" : attr.getValue();
 	}
 

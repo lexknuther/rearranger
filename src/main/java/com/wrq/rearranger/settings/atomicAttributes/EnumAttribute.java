@@ -27,13 +27,13 @@ import org.jdom.Element;
 /**
  * Routines to handle 'enum' class attribute.
  */
-public class EnumAttribute
-		extends AndNotAttribute {
+public class EnumAttribute extends AndNotAttribute {
 
 // -------------------------- STATIC METHODS --------------------------
 
 	public static EnumAttribute readExternal(final Element item) {
-		final EnumAttribute result = new EnumAttribute();
+		EnumAttribute result = new EnumAttribute();
+
 		result.loadAttributes(item.getChild(result.getElementName()));
 		return result;
 	}
@@ -49,8 +49,9 @@ public class EnumAttribute
 	/**
 	 * final attribute.
 	 */
-	public final /*EnumAttribute*/AtomicAttribute deepCopy() {
-		final EnumAttribute result = new EnumAttribute();
+	public /*EnumAttribute*/AtomicAttribute deepCopy() {
+		EnumAttribute result = new EnumAttribute();
+
 		result.value = value;
 		result.invert = invert;
 		return result;

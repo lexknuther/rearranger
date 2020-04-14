@@ -24,6 +24,7 @@ package com.wrq.rearranger.configuration;
 import com.wrq.rearranger.RearrangerImplementation;
 import com.wrq.rearranger.settings.CommentRule;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.settings.attributeGroups.AttributeGroup;
 import com.wrq.rearranger.settings.attributeGroups.RegexUtil;
 import com.wrq.rearranger.util.CommentUtil;
@@ -31,6 +32,7 @@ import com.wrq.rearranger.util.Constraints;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -59,8 +61,7 @@ import javax.swing.event.DocumentListener;
 /**
  * Code for top level configuration panel.
  */
-public final class RearrangerSettingsPanel
-		extends JPanel {
+public class RearrangerSettingsPanel extends JPanel {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -68,18 +69,21 @@ public final class RearrangerSettingsPanel
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	// ---------- START Level 1 ----------
-	public RearrangerSettingsPanel(final RearrangerSettings externalSettings) {
-		RearrangerSettings settings = externalSettings.deepCopy();
+	public RearrangerSettingsPanel(RearrangerSettings externalSettings) {
 		setLayout(new GridBagLayout());
-		createSettingsPanel(settings);
+		createSettingsPanel(externalSettings.deepCopy());
 	}
 
-// ---------- START Level 2 ----------
+	@Override
+	public final void setLayout(LayoutManager layoutManager) {
+		super.setLayout(layoutManager);
+	}
 
 	private void createSettingsPanel(RearrangerSettings settings) {
 		this.settings = settings;
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightedLastRow();
 		while (getComponents().length > 0) {
@@ -89,20 +93,21 @@ public final class RearrangerSettingsPanel
 		validate();
 	}
 
-// ---------- START Level 3 ----------
-
 	private JPanel getSettingsPanel() {
-		final JPanel containerPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+		JPanel containerPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightedLastRow();
-		final JTabbedPane pane = new JTabbedPane();
-		final SettingsPane classMemberSettingsPane = new ClassMemberSettingsPane(settings);
-		final SettingsPane classOrderSettingsPane = new ClassOrderSettingsPane(settings);
-		final SpacingPane spacingPane = new SpacingPane(settings);
-		final ExtractedMethodsPane extractedMethodsSettings = new ExtractedMethodsPane();
-		final JPanel generalSettingsPane = getGeneralSettingsPane();
-		final RelatedByNamePane rbnp = new RelatedByNamePane(settings.getExtractedMethodsSettings().getRbnms());
+
+		JTabbedPane pane = new JTabbedPane();
+		SettingsPane classMemberSettingsPane = new ClassMemberSettingsPane(settings);
+		SettingsPane classOrderSettingsPane = new ClassOrderSettingsPane(settings);
+		SpacingPane spacingPane = new SpacingPane(settings);
+		ExtractedMethodsPane extractedMethodsSettings = new ExtractedMethodsPane();
+		JPanel generalSettingsPane = getGeneralSettingsPane();
+		RelatedByNamePane rbnp = new RelatedByNamePane(settings.getExtractedMethodsSettings().getRbnms());
+
 		pane.addTab(
 				"Class Member Order",
 				null,
@@ -145,8 +150,6 @@ public final class RearrangerSettingsPanel
 		containerPanel.add(pane, constraints.weightedLastCol());
 		return containerPanel;
 	}
-
-// ---------- START Level 4 ----------
 
 	private JPanel getGeneralSettingsPane() {
 		final JPanel gsPanel = new JPanel(new GridBagLayout());
@@ -347,7 +350,8 @@ public final class RearrangerSettingsPanel
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						String t = commentArea.getText();
-						if (t.length() > 0) {
+
+						if (!t.isEmpty()) {
 							int result = JOptionPane.showConfirmDialog(
 									null, "This will replace the existing comment pattern with the generated pattern." +
 											"  Are you sure?",
@@ -365,20 +369,9 @@ public final class RearrangerSettingsPanel
 				}
 		);
 
-		verifyCommentsButton.addActionListener(
-				new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						checkCommentsAgainstGlobalPattern(settings);
-					}
-
-				}
-		);
+		verifyCommentsButton.addActionListener(e -> checkCommentsAgainstGlobalPattern(settings));
 		return gsPanel;
 	}
-
-// ---------- START Level 5 ----------
 
 	private String generateCommentPattern(RearrangerSettings settings) {
 		new CommentUtil(settings);
@@ -395,7 +388,8 @@ public final class RearrangerSettingsPanel
 	 */
 	public void checkCommentsAgainstGlobalPattern(RearrangerSettings settings) {
 		String pattern = settings.getGlobalCommentPattern();
-		if (pattern == null || pattern.trim().length() == 0) {
+
+		if (pattern == null || pattern.trim().isEmpty()) {
 			JOptionPane.showMessageDialog(
 					null, "No global comment pattern exists!"
 					, "Verify Comments Against Pattern",
@@ -464,8 +458,6 @@ public final class RearrangerSettingsPanel
 		}
 	}
 
-// ---------- START Level 6 ----------
-
 	private int checkAttributeListForErrors(
 			List<AttributeGroup> list,
 			int nCommentsSeen,
@@ -508,76 +500,48 @@ public final class RearrangerSettingsPanel
 		}
 	}
 
-// ---------- END Level 6 ----------
-
-// ---------- END Level 5 ----------
-
 	private JPanel getConfigurationPane() {
-		final JPanel gcPanel = new JPanel(new GridBagLayout());
+		JPanel gcPanel = new JPanel(new GridBagLayout());
 		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.insets = new Insets(5, 5, 0, 5);
-		final JButton clearConfig = new JButton("Clear configuration");
-		final JButton loadDefaultConfig = new JButton("Load default configuration");
-		final JButton readConfig = new JButton("Read configuration from file...");
-		final JButton writeConfig = new JButton("Write configuration to file...");
-		clearConfig.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				createSettingsPanel(new RearrangerSettings());
-			}
+		JButton clearConfig = new JButton("Clear configuration");
+		JButton loadDefaultConfig = new JButton("Load default configuration");
+		JButton readConfig = new JButton("Read configuration from file...");
+		JButton writeConfig = new JButton("Write configuration to file...");
 
+		clearConfig.addActionListener(event -> createSettingsPanel(new RearrangerSettingsImplementation()));
+		loadDefaultConfig.addActionListener(event -> {
+			createSettingsPanel(RearrangerSettingsImplementation.getDefaultSettings());
 		});
-		loadDefaultConfig.addActionListener(new ActionListener() {
+		readConfig.addActionListener(event -> {
+			JFileChooser fc = new JFileChooser();
+			int returnVal = fc.showOpenDialog(null);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RearrangerSettings defaultSettings = RearrangerSettings.getDefaultSettings();
-				if (defaultSettings == null) {
-					JOptionPane.showMessageDialog(null, "Could not obtain default configuration.",
-							"No default configuration available", JOptionPane.WARNING_MESSAGE
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				RearrangerSettings fileSettings = RearrangerSettingsImplementation.getSettingsFromFile(file);
+
+				if (fileSettings == null) {
+					JOptionPane.showMessageDialog(null, "Could not read configuration.",
+							"File or file contents invalid", JOptionPane.WARNING_MESSAGE
 					);
 				} else {
-					createSettingsPanel(defaultSettings);
+					createSettingsPanel(fileSettings);
 				}
 			}
-
 		});
-		readConfig.addActionListener(new ActionListener() {
+		writeConfig.addActionListener(event -> {
+			JFileChooser fc = new JFileChooser();
+			int returnVal = fc.showSaveDialog(null);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnVal = fc.showOpenDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					RearrangerSettings fileSettings = RearrangerSettings.getSettingsFromFile(file);
-					if (fileSettings == null) {
-						JOptionPane.showMessageDialog(null, "Could not read configuration.",
-								"File or file contents invalid", JOptionPane.WARNING_MESSAGE
-						);
-					} else {
-						createSettingsPanel(fileSettings);
-					}
-				}
+				settings.writeSettingsToFile(file);
 			}
-
-		});
-		writeConfig.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnVal = fc.showSaveDialog(null);
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					settings.writeSettingsToFile(file);
-				}
-			}
-
 		});
 		gcPanel.add(clearConfig, constraints.weightedLastCol());
 		constraints.newRow();
@@ -609,12 +573,5 @@ public final class RearrangerSettingsPanel
 		extraPanel.add(version, constraints.lastCol());
 		return extraPanel;
 	}
-
-// ---------- END Level 4 ----------
-// ---------- END Level 3 ----------
-
-// ---------- END Level 2 ----------
-
-// ---------- END Level 1 ----------
 
 }

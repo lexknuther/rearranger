@@ -33,6 +33,7 @@ import com.wrq.rearranger.entry.RangeEntry;
 import com.wrq.rearranger.rearrangement.Emitter;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.IconUtil;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -84,7 +85,7 @@ public class LiveRearrangerPopup
 
 	private Logger logger = Logger.getInstance(getClass());
 
-	final RearrangerSettings settings;
+	final RearrangerSettingsImplementation settings;
 
 	PopupTreeComponent treeComponent;
 
@@ -134,7 +135,7 @@ public class LiveRearrangerPopup
 // --------------------------- CONSTRUCTORS ---------------------------
 
 	public LiveRearrangerPopup(
-			RearrangerSettings settings,
+			RearrangerSettingsImplementation settings,
 			final IFilePopupEntry psiFileEntry,
 			Window outerPanel,
 			Document document,
@@ -149,7 +150,7 @@ public class LiveRearrangerPopup
 	}
 
 	public LiveRearrangerPopup(
-			RearrangerSettings settings, PsiFile psiFile, Document document, Project project,
+			RearrangerSettingsImplementation settings, PsiFile psiFile, Document document, Project project,
 			final Window outerPanel, int cursorOffset) {
 		this.settings = settings;
 		this.document = document;
@@ -598,7 +599,7 @@ public class LiveRearrangerPopup
 //        t.testIt();
 //        void testIt()
 //        {
-		final RearrangerSettings settings = new RearrangerSettings();
+		final RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation();
 		IFilePopupEntry pf = new IFilePopupEntry() {
 
 			@Override

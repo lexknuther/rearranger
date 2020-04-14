@@ -28,6 +28,7 @@ import com.wrq.rearranger.LiveRearrangerActionHandler;
 import com.wrq.rearranger.rearrangement.Emitter;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import com.wrq.rearranger.util.IconUtil;
 import java.awt.Dimension;
@@ -61,7 +62,7 @@ public class LiveRearrangerDialog
 
 	private Logger logger = Logger.getInstance(getClass());
 
-	final RearrangerSettings settings;
+	final RearrangerSettingsImplementation settings;
 
 	PopupTreeComponent treeComponent;
 
@@ -90,7 +91,7 @@ public class LiveRearrangerDialog
 // --------------------------- CONSTRUCTORS ---------------------------
 
 	public LiveRearrangerDialog(
-			RearrangerSettings settings, PsiFile psiFile, Document document,
+			RearrangerSettingsImplementation settings, PsiFile psiFile, Document document,
 			final Window outerPanel, int cursorOffset) {
 		this.settings = settings;
 		this.document = document;

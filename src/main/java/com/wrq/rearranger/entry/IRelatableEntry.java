@@ -52,9 +52,7 @@ public interface IRelatableEntry {
 	 * @param settings current settings, containing extracted/related method options.
 	 * @param contents contents of class, containing potentially related methods.
 	 */
-	void determineSettersAndMethodCalls(
-			RearrangerSettings settings,
-			List<ClassContentsEntry> contents);
+	void determineSettersAndMethodCalls(RearrangerSettings settings, List<ClassContentsEntry> contents);
 
 	/**
 	 * @return true if the method is a setter and will be emitted below a corresponding getter.

@@ -44,8 +44,7 @@ import javax.swing.JScrollPane;
 /**
  * Contains settings pertinent to a single related-by-name method setting.   A primary field is specified
  */
-public class PrimaryMethodSetting
-		implements IListManagerObject {
+public class PrimaryMethodSetting implements IListManagerObject {
 
 // ------------------------------ FIELDS ------------------------------
 

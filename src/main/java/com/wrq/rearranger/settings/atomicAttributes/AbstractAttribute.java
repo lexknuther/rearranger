@@ -27,13 +27,13 @@ import org.jdom.Element;
 /**
  * Common routines for 'abstract' modifier.
  */
-public final class AbstractAttribute
-		extends AndNotAttribute {
+public class AbstractAttribute extends AndNotAttribute {
 
 // -------------------------- STATIC METHODS --------------------------
 
 	public static AbstractAttribute readExternal(final Element item) {
-		final AbstractAttribute result = new AbstractAttribute();
+		AbstractAttribute result = new AbstractAttribute();
+
 		result.loadAttributes(item.getChild(result.getElementName()));
 		return result;
 	}
@@ -46,8 +46,9 @@ public final class AbstractAttribute
 
 // -------------------------- OTHER METHODS --------------------------
 
-	public final /*AbstractAttribute*/AtomicAttribute deepCopy() {
-		final AbstractAttribute aba = new AbstractAttribute();
+	public /*AbstractAttribute*/AtomicAttribute deepCopy() {
+		AbstractAttribute aba = new AbstractAttribute();
+
 		aba.value = value;
 		aba.invert = invert;
 		return aba;

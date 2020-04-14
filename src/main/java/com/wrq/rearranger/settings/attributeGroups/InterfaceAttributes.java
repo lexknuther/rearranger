@@ -27,7 +27,7 @@ import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.ruleinstance.InterfaceRuleInstance;
 import com.wrq.rearranger.settings.CommentFillString;
 import com.wrq.rearranger.settings.CommentRule;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.settings.atomicAttributes.NameAttribute;
 import com.wrq.rearranger.util.Constraints;
 import java.awt.GridBagConstraints;
@@ -93,9 +93,9 @@ public class InterfaceAttributes
 
 	public void loadAttributes(final Element item) {
 		nameAttr = NameAttribute.readExternal(item);
-		alphabetizeInterfaces = RearrangerSettings.getBooleanAttribute(item, "alphabetizeInterfaces");
-		noExtractedMethods = RearrangerSettings.getBooleanAttribute(item, "noExtractedMethods");
-		methodOrder = RearrangerSettings.getIntAttribute(item, "methodOrder", METHOD_ORDER_ENCOUNTERED);
+		alphabetizeInterfaces = RearrangerSettingsImplementation.getBooleanAttribute(item, "alphabetizeInterfaces");
+		noExtractedMethods = RearrangerSettingsImplementation.getBooleanAttribute(item, "noExtractedMethods");
+		methodOrder = RearrangerSettingsImplementation.getIntAttribute(item, "methodOrder", METHOD_ORDER_ENCOUNTERED);
 		Element prc = item.getChild("PrecedingComment");
 		if (prc != null) {
 			prc = prc.getChild("Comment");
@@ -107,7 +107,7 @@ public class InterfaceAttributes
 		}
 		trailingComment = CommentRule.readExternal(trc);
 		commentFillString = CommentFillString.readExternal(item);
-		priority = RearrangerSettings.getIntAttribute(item, "priority", 1);
+		priority = RearrangerSettingsImplementation.getIntAttribute(item, "priority", 1);
 	}
 
 // --------------------------- CONSTRUCTORS ---------------------------

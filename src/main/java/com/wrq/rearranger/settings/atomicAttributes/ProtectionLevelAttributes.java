@@ -21,14 +21,15 @@
  */
 package com.wrq.rearranger.settings.atomicAttributes;
 
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
+
+import java.util.Objects;
+
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import org.jdom.Element;
@@ -36,8 +37,7 @@ import org.jdom.Element;
 /**
  * Routines to handle the four protection level modifiers.
  */
-public final class ProtectionLevelAttributes
-		extends AtomicAttribute {
+public class ProtectionLevelAttributes extends AtomicAttribute {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -56,70 +56,73 @@ public final class ProtectionLevelAttributes
 
 // -------------------------- STATIC METHODS --------------------------
 
-	public static ProtectionLevelAttributes readExternal(final Element item) {
-		final ProtectionLevelAttributes result = new ProtectionLevelAttributes();
-		final Element me = item.getChild("ProtectionLevel");
+	public static ProtectionLevelAttributes readExternal(Element item) {
+		ProtectionLevelAttributes result = new ProtectionLevelAttributes();
+		Element me = item.getChild("ProtectionLevel");
+
 		result.loadAttributes(me);
 		return result;
 	}
 
-	private void loadAttributes(final Element me) {
-		plPublic = RearrangerSettings.getBooleanAttribute(me, "public");
-		plPrivate = RearrangerSettings.getBooleanAttribute(me, "private");
-		plProtected = RearrangerSettings.getBooleanAttribute(me, "protected");
-		plPackage = RearrangerSettings.getBooleanAttribute(me, "package");
-		invertProtectionLevel = RearrangerSettings.getBooleanAttribute(me, "invert");
+	private void loadAttributes(Element me) {
+		plPublic = RearrangerSettingsImplementation.getBooleanAttribute(me, "public");
+		plPrivate = RearrangerSettingsImplementation.getBooleanAttribute(me, "private");
+		plProtected = RearrangerSettingsImplementation.getBooleanAttribute(me, "protected");
+		plPackage = RearrangerSettingsImplementation.getBooleanAttribute(me, "package");
+		invertProtectionLevel = RearrangerSettingsImplementation.getBooleanAttribute(me, "invert");
 	}
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-	private boolean isInvertProtectionLevel() {
+	public boolean isInvertProtectionLevel() {
 		return invertProtectionLevel;
 	}
 
-	public final void setInvertProtectionLevel(final boolean invertProtectionLevel) {
+	public void setInvertProtectionLevel(final boolean invertProtectionLevel) {
 		this.invertProtectionLevel = invertProtectionLevel;
 	}
 
-	private boolean isPlPackage() {
+	public boolean isPlPackage() {
 		return plPackage;
 	}
 
-	public final void setPlPackage(final boolean plPackage) {
+	public void setPlPackage(boolean plPackage) {
 		this.plPackage = plPackage;
 	}
 
-	private boolean isPlPrivate() {
+	public boolean isPlPrivate() {
 		return plPrivate;
 	}
 
-	public void setPlPrivate(final boolean plPrivate) {
+	public void setPlPrivate(boolean plPrivate) {
 		this.plPrivate = plPrivate;
 	}
 
-	private boolean isPlProtected() {
+	public boolean isPlProtected() {
 		return plProtected;
 	}
 
-	public final void setPlProtected(final boolean plProtected) {
+	public void setPlProtected(boolean plProtected) {
 		this.plProtected = plProtected;
 	}
 
-	private boolean isPlPublic() {
+	public boolean isPlPublic() {
 		return plPublic;
 	}
 
-	public final void setPlPublic(final boolean plPublic) {
+	public void setPlPublic(boolean plPublic) {
 		this.plPublic = plPublic;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof ProtectionLevelAttributes)) {
+	public boolean equals(final Object value) {
+		if (!(value instanceof ProtectionLevelAttributes)) {
 			return false;
 		}
-		final ProtectionLevelAttributes pla = (ProtectionLevelAttributes) obj;
+
+		ProtectionLevelAttributes pla = (ProtectionLevelAttributes) value;
+
 		return plPublic == pla.plPublic &&
 				plPrivate == pla.plPrivate &&
 				plProtected == pla.plProtected &&
@@ -127,10 +130,16 @@ public final class ProtectionLevelAttributes
 				invertProtectionLevel == pla.invertProtectionLevel;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(plPublic, plPrivate, plProtected, plPackage, invertProtectionLevel);
+	}
+
 // -------------------------- OTHER METHODS --------------------------
 
-	public final void appendAttributes(final Element me) {
-		final Element plElement = new Element("ProtectionLevel");
+	public void appendAttributes(final Element me) {
+		Element plElement = new Element("ProtectionLevel");
+
 		me.getChildren().add(plElement);
 		plElement.setAttribute("public", Boolean.valueOf(plPublic).toString());
 		plElement.setAttribute("private", Boolean.valueOf(plPrivate).toString());
@@ -139,8 +148,9 @@ public final class ProtectionLevelAttributes
 		plElement.setAttribute("invert", Boolean.valueOf(invertProtectionLevel).toString());
 	}
 
-	public final /*ProtectionLevelAttributes*/AtomicAttribute deepCopy() {
-		final ProtectionLevelAttributes pla = new ProtectionLevelAttributes();
+	public  /*ProtectionLevelAttributes*/AtomicAttribute deepCopy() {
+		ProtectionLevelAttributes pla = new ProtectionLevelAttributes();
+
 		pla.plPublic = plPublic;
 		pla.plPrivate = plPrivate;
 		pla.plProtected = plProtected;
@@ -149,40 +159,46 @@ public final class ProtectionLevelAttributes
 		return pla;
 	}
 
-	public final JPanel getProtectionLevelPanel() {
-		final JPanel plPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints();
+	public JPanel getProtectionLevelPanel() {
+		JPanel plPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints();
+
 		constraints.weightedLastRow();
 		constraints.fill = GridBagConstraints.BOTH;
-		final JCheckBox notBox = new JCheckBox("not");
+
+		JCheckBox notBox = new JCheckBox("not");
+
 		notBox.setSelected(isInvertProtectionLevel());
 		notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
 		plPanel.add(notBox, constraints.firstCol());
-		final JPanel plLevels = getProtLevels();
+
+		JPanel plLevels = getProtLevels();
+
 		plPanel.add(plLevels, constraints.weightedLastCol());
-		notBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setInvertProtectionLevel(notBox.isSelected());
-				notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
-			}
-
+		notBox.addActionListener(e -> {
+			setInvertProtectionLevel(notBox.isSelected());
+			notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
 		});
-
 		return plPanel;
 	}
 
 	private JPanel getProtLevels() {
-		final JPanel plPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints();
-		final JCheckBox publicBox = new JCheckBox("public or");
+		JPanel plPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints();
+		JCheckBox publicBox = new JCheckBox("public or");
+
 		publicBox.setSelected(isPlPublic());
-		final JCheckBox privateBox = new JCheckBox("private or");
+
+		JCheckBox privateBox = new JCheckBox("private or");
+
 		privateBox.setSelected(isPlPrivate());
-		final JCheckBox protectedBox = new JCheckBox("protected or");
+
+		JCheckBox protectedBox = new JCheckBox("protected or");
+
 		protectedBox.setSelected(isPlProtected());
-		final JCheckBox packageBox = new JCheckBox("package");
+
+		JCheckBox packageBox = new JCheckBox("package");
+
 		packageBox.setSelected(isPlPackage());
 		plPanel.add(publicBox, constraints.weightedLastCol());
 		constraints.newRow();
@@ -191,49 +207,29 @@ public final class ProtectionLevelAttributes
 		plPanel.add(protectedBox, constraints.weightedLastCol());
 		constraints.weightedLastRow();
 		plPanel.add(packageBox, constraints.weightedLastCol());
-		publicBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setPlPublic(publicBox.isSelected());
-			}
-
+		publicBox.addActionListener(e -> {
+			setPlPublic(publicBox.isSelected());
 		});
-		privateBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setPlPrivate(privateBox.isSelected());
-			}
-
+		privateBox.addActionListener(e -> {
+			setPlPrivate(privateBox.isSelected());
 		});
-		protectedBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setPlProtected(protectedBox.isSelected());
-			}
-
+		protectedBox.addActionListener(e -> {
+			setPlProtected(protectedBox.isSelected());
 		});
-		packageBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setPlPackage(packageBox.isSelected());
-			}
-
+		packageBox.addActionListener(e -> {
+			setPlPackage(packageBox.isSelected());
 		});
 		return plPanel;
 	}
 
-	public final String getProtectionLevelString() {
-		final StringBuffer sb = new StringBuffer(60);
-		final int nProtLevels = (isPlPublic() ? 1 : 0) +
+	public String getProtectionLevelString() {
+		StringBuffer sb = new StringBuffer(60);
+		int nProtLevels = (isPlPublic() ? 1 : 0) +
 				(isPlPrivate() ? 1 : 0) +
 				(isPlProtected() ? 1 : 0) +
 				(isPlPackage() ? 1 : 0);
-
 		int nProtLevelsSeen = 0;
+
 		if (isPlPublic()) {
 			sb.append(isInvertProtectionLevel() ? "non-public" : "public");
 			nProtLevelsSeen++;
@@ -273,18 +269,18 @@ public final class ProtectionLevelAttributes
 	 *
 	 * @return true if the supplied protection level modifiers match this object's modifier requirements.
 	 */
-	public final boolean isMatch(final int modifiers) {
-		boolean result;
+	public boolean isMatch(int modifiers) {
 		if (!plPublic && !plPrivate && !plProtected && !plPackage) {
 			return true; // nothing selected, so don't take protection level into account.
 		}
-		result =
-				plPublic && Modifier.isPublic(modifiers) ||
-						plPrivate && Modifier.isPrivate(modifiers) ||
-						plProtected && Modifier.isProtected(modifiers) ||
-						plPackage && !(Modifier.isPublic(modifiers) ||
-								Modifier.isPrivate(modifiers) ||
-								Modifier.isProtected(modifiers));
+
+		boolean result = plPublic && Modifier.isPublic(modifiers) ||
+				plPrivate && Modifier.isPrivate(modifiers) ||
+				plProtected && Modifier.isProtected(modifiers) ||
+				plPackage && !(Modifier.isPublic(modifiers) ||
+						Modifier.isPrivate(modifiers) ||
+						Modifier.isProtected(modifiers));
+
 		result ^= invertProtectionLevel;
 		return result;
 	}

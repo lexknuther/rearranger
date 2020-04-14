@@ -39,8 +39,7 @@ import org.jdom.Element;
 /**
  * Routines to handle class modifiers other than those already handled by CommonAttributes.
  */
-public final class ClassAttributes
-		extends CommonAttributes {
+public class ClassAttributes extends CommonAttributes {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -50,9 +49,10 @@ public final class ClassAttributes
 
 // -------------------------- STATIC METHODS --------------------------
 
-	public static AttributeGroup readExternal(final Element element) {
+	public static AttributeGroup readExternal(Element element) {
 		if (element.getName().equals("Class")) {
-			final ClassAttributes result = new ClassAttributes();
+			ClassAttributes result = new ClassAttributes();
+
 			CommonAttributes.readExternal(result, element);
 			result.abAttr = AbstractAttribute.readExternal(element);
 			result.enumAttr = EnumAttribute.readExternal(element);
@@ -77,8 +77,16 @@ public final class ClassAttributes
 		return abAttr;
 	}
 
+	public void setAbAttr(AbstractAttribute value) {
+		abAttr = value;
+	}
+
 	public EnumAttribute getEnumAttr() {
 		return enumAttr;
+	}
+
+	public void setEnumAttr(EnumAttribute value) {
+		enumAttr = value;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -87,29 +95,32 @@ public final class ClassAttributes
 		if (!(obj instanceof ClassAttributes)) {
 			return false;
 		}
-		final ClassAttributes ca = (ClassAttributes) obj;
+
+		ClassAttributes ca = (ClassAttributes) obj;
+
 		return super.equals(ca) &&
 				abAttr.equals(ca.abAttr) &&
 				enumAttr.equals(ca.enumAttr);
 	}
 
 	public final String toString() {
-		final StringBuffer sb = new StringBuffer(70);
+		StringBuffer sb = new StringBuffer(70);
+
 		sb.append(abAttr.getDescriptiveString());
-		sb.append(plAttr.getProtectionLevelString());
-		sb.append(stAttr.getDescriptiveString());
-		sb.append(fAttr.getDescriptiveString());
+		sb.append(getPlAttr().getProtectionLevelString());
+		sb.append(getStAttr().getDescriptiveString());
+		sb.append(getfAttr().getDescriptiveString());
 		sb.append(enumAttr.getDescriptiveString());
 		if (sb.length() == 0) {
 			sb.append("all classes");
 		} else {
 			sb.append("classes");
 		}
-		if (nameAttr.isMatch()) {
+		if (getNameAttr().isMatch()) {
 			sb.append(' ');
-			sb.append(nameAttr.getDescriptiveString());
+			sb.append(getNameAttr().getDescriptiveString());
 		}
-		sb.append(sortAttr.getDescriptiveString());
+		sb.append(getSortAttr().getDescriptiveString());
 		return sb.toString();
 	}
 
@@ -119,7 +130,8 @@ public final class ClassAttributes
 
 	@Override
 	public final /*ClassAttributes*/AttributeGroup deepCopy() {
-		final ClassAttributes result = new ClassAttributes();
+		ClassAttributes result = new ClassAttributes();
+
 		deepCopyCommonItems(result);
 		result.abAttr = (AbstractAttribute) abAttr.deepCopy();
 		result.enumAttr = (EnumAttribute) enumAttr.deepCopy();
@@ -127,8 +139,9 @@ public final class ClassAttributes
 	}
 
 	@Override
-	public final void writeExternal(final Element parent) {
-		final Element me = new Element("Class");
+	public final void writeExternal(Element parent) {
+		Element me = new Element("Class");
+
 		writeExternalCommonAttributes(me);
 		abAttr.appendAttributes(me);
 		enumAttr.appendAttributes(me);
@@ -138,9 +151,7 @@ public final class ClassAttributes
 // --------------------- Interface IRule ---------------------
 
 	@Override
-	public final boolean isMatch(RangeEntry entry)
-	// final int modifiers, final String name, final String returnType)
-	{
+	public final boolean isMatch(RangeEntry entry) {
 		return entry.getEnd().getParent() instanceof PsiClass &&
 				entry.getEnd() instanceof PsiJavaToken &&
 //               ((PsiJavaToken)entry.getEnd()).getTokenType() == PsiJavaToken.LBRACE &&
@@ -153,34 +164,37 @@ public final class ClassAttributes
 // -------------------------- OTHER METHODS --------------------------
 
 	public final JPanel getClassAttributesPanel() {
-		final JPanel caPanel = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEtchedBorder();
-		caPanel.setBorder(border);
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+		JPanel result = new JPanel(new GridBagLayout());
+		Border border = BorderFactory.createEtchedBorder();
+
+		result.setBorder(border);
+
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.gridheight = 4;
 		constraints.weightx = 1.0d;
 		constraints.weighty = 0.0d;
 		constraints.insets = new Insets(0, 0, 10, 0);
-		caPanel.add(getPlAttr().getProtectionLevelPanel(), constraints);
+		result.add(getPlAttr().getProtectionLevelPanel(), constraints);
 		constraints.gridy = 4;
 		constraints.gridheight = 1;
-		caPanel.add(getStAttr().getAndNotPanel(), constraints);
+		result.add(getStAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getAbAttr().getAndNotPanel(), constraints);
+		result.add(getAbAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getfAttr().getAndNotPanel(), constraints);
+		result.add(getfAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getEnumAttr().getAndNotPanel(), constraints);
+		result.add(getEnumAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getNameAttr().getStringPanel(), constraints);
+		result.add(getNameAttr().getStringPanel(), constraints);
 		constraints.gridy++;
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		caPanel.add(sortAttr.getSortOptionsPanel(), constraints);
-		return caPanel;
+		result.add(getSortAttr().getSortOptionsPanel(), constraints);
+		return result;
 	}
 
 }

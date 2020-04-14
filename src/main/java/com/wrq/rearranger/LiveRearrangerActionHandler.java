@@ -44,7 +44,7 @@ import com.wrq.rearranger.popup.LiveRearrangerPopup;
 import com.wrq.rearranger.rearrangement.Mover;
 import com.wrq.rearranger.rearrangement.Parser;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.CommentUtil;
 import java.awt.Window;
 
@@ -129,7 +129,7 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 		 */
 		final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
 		documentManager.commitDocument(document);
-		final RearrangerSettings settings = new RearrangerSettings(); // use default settings with no rules
+		final RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation(); // use default settings with no rules
 		settings.setAskBeforeRearranging(true);
 		settings.setRearrangeInnerClasses(true);
 		if (useDialog) {
@@ -192,7 +192,7 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 	public final void liveRearrangeDocument(
 			final Project project,
 			final PsiFile psiFile,
-			final RearrangerSettings settings,
+			final RearrangerSettingsImplementation settings,
 			final Document document,
 			final int cursorOffset) {
 		logger.debug("enter liveRearrangeDocument on thread " + Thread.currentThread().getName());

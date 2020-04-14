@@ -57,7 +57,7 @@ public class CommentFillString {
 
 	public static CommentFillString readExternal(final Element item) {
 		CommentFillString result = new CommentFillString();
-		Attribute fillAttr = RearrangerSettings.getAttribute(item, "fillString");
+		Attribute fillAttr = RearrangerSettingsImplementation.getAttribute(item, "fillString");
 
 		if (fillAttr == null) {
 			result.fillString = "";
@@ -65,8 +65,8 @@ public class CommentFillString {
 			String fill = fillAttr.getValue();
 			result.fillString = CommentRule.unescape(fill);
 		}
-		result.useProjectWidthForFill = RearrangerSettings.getBooleanAttribute(item, "useProjectWidthForFill", true);
-		result.fillWidth = RearrangerSettings.getIntAttribute(item, "fillWidth", 0);
+		result.useProjectWidthForFill = RearrangerSettingsImplementation.getBooleanAttribute(item, "useProjectWidthForFill", true);
+		result.fillWidth = RearrangerSettingsImplementation.getIntAttribute(item, "fillWidth", 0);
 		return result;
 	}
 

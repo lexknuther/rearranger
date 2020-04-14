@@ -36,17 +36,17 @@ public class ForceBlankLineSetting {
 
 	public static final int EOF_OBJECT = 2;
 
-	boolean force;
+	private boolean force;
 
-	int nBlankLines;
+	private int nBlankLines;
 
-	final boolean before;     // false => after
+	private boolean before;
 
-	final boolean openBrace;  // false => close brace
+	private boolean openBrace;
 
-	final int object;
+	private int object;
 
-	final String name;
+	private String name;
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -56,19 +56,15 @@ public class ForceBlankLineSetting {
 	 * @param entry JDOM element which contains setting values as attributes.
 	 */
 	public static ForceBlankLineSetting readExternal(
-			final Element entry,
-			boolean before,
-			boolean openBrace,
-			int object,
-			String name) {
-		ForceBlankLineSetting fbls;
+			Element entry, boolean before, boolean openBrace, int object, String name) {
 		Element fblsElement = entry.getChild(name);
-		boolean force = RearrangerSettings.getBooleanAttribute(fblsElement, "Force", false);
-		int nBlankLines = RearrangerSettings.getIntAttribute(fblsElement, "nBlankLines", 1);
-		fbls = new ForceBlankLineSetting(before, openBrace, object, name);
-		fbls.setForce(force);
-		fbls.setnBlankLines(nBlankLines);
-		return fbls;
+		boolean force = RearrangerSettingsImplementation.getBooleanAttribute(fblsElement, "Force", false);
+		int nBlankLines = RearrangerSettingsImplementation.getIntAttribute(fblsElement, "nBlankLines", 1);
+		ForceBlankLineSetting result = new ForceBlankLineSetting(before, openBrace, object, name);
+
+		result.setForce(force);
+		result.setnBlankLines(nBlankLines);
+		return result;
 	}
 
 	public void setnBlankLines(int nBlankLines) {
@@ -76,6 +72,9 @@ public class ForceBlankLineSetting {
 	}
 
 // --------------------------- CONSTRUCTORS ---------------------------
+
+	public ForceBlankLineSetting() {
+	}
 
 	public ForceBlankLineSetting(boolean before, boolean openBrace, int object, String name) {
 		this.before = before;
@@ -141,8 +140,9 @@ public class ForceBlankLineSetting {
 
 // -------------------------- OTHER METHODS --------------------------
 
-	public final ForceBlankLineSetting deepCopy() {
-		final ForceBlankLineSetting result = new ForceBlankLineSetting(before, openBrace, object, name);
+	public ForceBlankLineSetting deepCopy() {
+		ForceBlankLineSetting result = new ForceBlankLineSetting(before, openBrace, object, name);
+
 		result.force = force;
 		result.nBlankLines = nBlankLines;
 		return result;
@@ -152,8 +152,9 @@ public class ForceBlankLineSetting {
 		return nBlankLines;
 	}
 
-	public final void writeExternal(final Element entry) {
-		final Element fblsElement = new Element(name);
+	public void writeExternal(Element entry) {
+		Element fblsElement = new Element(name);
+
 		entry.getChildren().add(fblsElement);
 		fblsElement.setAttribute("Force", Boolean.valueOf(force).toString());
 		fblsElement.setAttribute("nBlankLines", "" + nBlankLines);

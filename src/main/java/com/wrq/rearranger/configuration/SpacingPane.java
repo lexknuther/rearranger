@@ -43,25 +43,28 @@ import javax.swing.border.Border;
 /**
  * UI code for Spacing rules dialog.
  */
-public class SpacingPane {
+class SpacingPane {
 
 // ------------------------------ FIELDS ------------------------------
 
-	private final RearrangerSettings settings;
+	private RearrangerSettings settings;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	public SpacingPane(RearrangerSettings settings) {
+	SpacingPane(RearrangerSettings settings) {
 		this.settings = settings;
 	}
 
 // -------------------------- OTHER METHODS --------------------------
 
 	public JPanel getPane() {
-		final JPanel panel = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEtchedBorder();
+		JPanel panel = new JPanel(new GridBagLayout());
+		Border border = BorderFactory.createEtchedBorder();
+
 		panel.setBorder(border);
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.weightx = 1.0d;
 		constraints.insets = new Insets(3, 3, 0, 0);

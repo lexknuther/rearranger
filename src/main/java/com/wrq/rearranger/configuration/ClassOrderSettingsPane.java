@@ -29,12 +29,11 @@ import javax.swing.JPanel;
 /**
  * UI code for Outer Class order dialog.
  */
-final class ClassOrderSettingsPane
-		extends SettingsPane {
+class ClassOrderSettingsPane extends SettingsPane {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	public ClassOrderSettingsPane(final RearrangerSettings settings) {
+	ClassOrderSettingsPane(RearrangerSettings settings) {
 		super(settings, settings.getClassOrderAttributeList());
 	}
 

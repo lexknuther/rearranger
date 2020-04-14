@@ -60,12 +60,12 @@ public abstract class GenericRearranger {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	@SuppressWarnings({"AssignmentToCollectionOrArrayFieldFromParameter"})
+	@SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")
 	protected GenericRearranger(
-			final List<AttributeGroup> rules,
-			final List<ClassContentsEntry> outerClasses,
-			final int nestingLevel,
-			final RearrangerSettings settings) {
+			List<AttributeGroup> rules,
+			List<ClassContentsEntry> outerClasses,
+			int nestingLevel,
+			RearrangerSettings settings) {
 		this.rules = rules;
 		entries = outerClasses;
 		this.nestingLevel = nestingLevel;
@@ -82,7 +82,8 @@ public abstract class GenericRearranger {
 	 * @return rearranged list of RangeEntry and CommentRuleInstance objects.
 	 */
 	public final List<IRuleInstance> rearrangeEntries() {
-		final List<IRuleInstance> prioritizedRuleInstances = new ArrayList<IRuleInstance>();
+		List<IRuleInstance> prioritizedRuleInstances = new ArrayList<>();
+
 		buildRuleInstanceLists(prioritizedRuleInstances);
 		/**
 		 * recursively reorder contents of every nested ClassEntry.

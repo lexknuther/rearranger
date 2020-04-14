@@ -39,6 +39,7 @@ public interface IFilePopupEntry {
 
 	/**
 	 * @return a JLabel containing the text of the popup tree entry.
+	 * @param settings
 	 */
 	JLabel getPopupEntryText(RearrangerSettings settings);
 

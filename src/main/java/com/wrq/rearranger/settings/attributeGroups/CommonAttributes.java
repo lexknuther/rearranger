@@ -24,7 +24,7 @@ package com.wrq.rearranger.settings.attributeGroups;
 import com.wrq.rearranger.entry.RangeEntry;
 import com.wrq.rearranger.ruleinstance.DefaultRuleInstance;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.settings.atomicAttributes.FinalAttribute;
 import com.wrq.rearranger.settings.atomicAttributes.NameAttribute;
 import com.wrq.rearranger.settings.atomicAttributes.ProtectionLevelAttributes;
@@ -41,32 +41,31 @@ import org.jdom.Element;
  * protected, package), final modifier, and static modifier.  Ability to match the name to a regular expression is also
  * supported.
  */
-public abstract class CommonAttributes
-		implements AttributeGroup, IPrioritizableRule {
+public abstract class CommonAttributes implements AttributeGroup, IPrioritizableRule {
 
 // ------------------------------ FIELDS ------------------------------
 
-	ProtectionLevelAttributes plAttr;
+	private ProtectionLevelAttributes plAttr;
 
-	FinalAttribute fAttr;
+	private FinalAttribute fAttr;
 
-	StaticAttribute stAttr;
+	private StaticAttribute stAttr;
 
-	NameAttribute nameAttr;
+	private NameAttribute nameAttr;
 
-	SortOptions sortAttr;
+	private SortOptions sortAttr;
 
-	int priority;   // 1 = low priority, > 1 is higher priority
+	private int priority; // 1 = low priority, > 1 is higher priority
 
 // -------------------------- STATIC METHODS --------------------------
 
-	static void readExternal(final CommonAttributes result, final Element item) {
+	static void readExternal(CommonAttributes result, Element item) {
 		result.plAttr = ProtectionLevelAttributes.readExternal(item);
 		result.stAttr = StaticAttribute.readExternal(item);
 		result.fAttr = FinalAttribute.readExternal(item);
 		result.nameAttr = NameAttribute.readExternal(item);
 		result.sortAttr = SortOptions.readExternal(item);
-		result.priority = RearrangerSettings.getIntAttribute(item, "priority", 1);
+		result.priority = RearrangerSettingsImplementation.getIntAttribute(item, "priority", 1);
 	}
 
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -82,12 +81,20 @@ public abstract class CommonAttributes
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-	public final NameAttribute getNameAttr() {
+	public NameAttribute getNameAttr() {
 		return nameAttr;
 	}
 
-	public final ProtectionLevelAttributes getPlAttr() {
+	public void setNameAttr(NameAttribute value) {
+		nameAttr = value;
+	}
+
+	public ProtectionLevelAttributes getPlAttr() {
 		return plAttr;
+	}
+
+	public void setPlAttr(ProtectionLevelAttributes value) {
+		plAttr = value;
 	}
 
 	@Override
@@ -104,8 +111,16 @@ public abstract class CommonAttributes
 		return sortAttr;
 	}
 
+	public void setSortAttr(SortOptions value) {
+		sortAttr = value;
+	}
+
 	public final StaticAttribute getStAttr() {
 		return stAttr;
+	}
+
+	public void setStAttr(StaticAttribute value) {
+		stAttr = value;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -168,11 +183,10 @@ public abstract class CommonAttributes
 
 	@Override
 	public boolean isMatch(RangeEntry rangeEntry) {
-		final boolean result = plAttr.isMatch(rangeEntry.getModifiers()) &&
+		return plAttr.isMatch(rangeEntry.getModifiers()) &&
 				stAttr.isMatch(rangeEntry.getModifiers()) &&
 				fAttr.isMatch(rangeEntry.getModifiers()) &&
 				nameAttr.isMatch(rangeEntry.getName());
-		return result;
 	}
 
 // -------------------------- OTHER METHODS --------------------------
@@ -188,6 +202,10 @@ public abstract class CommonAttributes
 
 	public final FinalAttribute getfAttr() {
 		return fAttr;
+	}
+
+	public void setfAttr(FinalAttribute value) {
+		fAttr = value;
 	}
 
 	final void writeExternalCommonAttributes(final Element child) {

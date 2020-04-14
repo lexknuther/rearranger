@@ -22,7 +22,7 @@
 package com.wrq.rearranger.settings.atomicAttributes;
 
 import com.wrq.rearranger.entry.RangeEntry;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,8 +43,7 @@ import org.jdom.Element;
  * optionally by type (optionally ignoring case), and by name (optionally ignoring case).  This covers all permutations.
  * Modifiers are always lower case so no need to ask about whether to ignore case.
  */
-public class SortOptions
-		extends AtomicAttribute {
+public class SortOptions extends AtomicAttribute {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -62,31 +61,24 @@ public class SortOptions
 
 	public static SortOptions readExternal(final Element item) {
 		SortOptions result = new SortOptions();
-		final Element me = item.getChild("SortOptions");
+		Element me = item.getChild("SortOptions");
+
 		result.loadAttributes(me);
 		// support old settings
-		result.byName |= RearrangerSettings.getBooleanAttribute(item, "alphabetize");
-		result.byType |= RearrangerSettings.getBooleanAttribute(item, "sortByType", false);
-		result.isTypeCaseInsensitive |= RearrangerSettings.getBooleanAttribute(item, "ignoreTypeCase", false);
+		result.byName |= RearrangerSettingsImplementation.getBooleanAttribute(item, "alphabetize");
+		result.byType |= RearrangerSettingsImplementation.getBooleanAttribute(item, "sortByType", false);
+		result.isTypeCaseInsensitive |= RearrangerSettingsImplementation.getBooleanAttribute(
+				item, "ignoreTypeCase", false
+		);
 		return result;
 	}
 
 	private void loadAttributes(final Element me) {
-		byModifiers = RearrangerSettings.getBooleanAttribute(me, "byModifiers");
-		byType = RearrangerSettings.getBooleanAttribute(me, "byType");
-		isTypeCaseInsensitive = RearrangerSettings.getBooleanAttribute(me, "isTypeCaseInsensitive");
-		byName = RearrangerSettings.getBooleanAttribute(me, "byName");
-		isNameCaseInsensitive = RearrangerSettings.getBooleanAttribute(me, "isNameCaseInsensitive");
-	}
-
-// --------------------------- CONSTRUCTORS ---------------------------
-
-	public SortOptions() {
-		byModifiers = false;
-		byType = false;
-		isTypeCaseInsensitive = false;
-		byName = false;
-		isNameCaseInsensitive = false;
+		byModifiers = RearrangerSettingsImplementation.getBooleanAttribute(me, "byModifiers");
+		byType = RearrangerSettingsImplementation.getBooleanAttribute(me, "byType");
+		isTypeCaseInsensitive = RearrangerSettingsImplementation.getBooleanAttribute(me, "isTypeCaseInsensitive");
+		byName = RearrangerSettingsImplementation.getBooleanAttribute(me, "byName");
+		isNameCaseInsensitive = RearrangerSettingsImplementation.getBooleanAttribute(me, "isNameCaseInsensitive");
 	}
 
 // --------------------- GETTER / SETTER METHODS ---------------------

@@ -27,13 +27,13 @@ import org.jdom.Element;
 /**
  * Handles the 'native' modifier.
  */
-public final class NativeAttribute
-		extends AndNotAttribute {
+public class NativeAttribute extends AndNotAttribute {
 
 // -------------------------- STATIC METHODS --------------------------
 
 	public static NativeAttribute readExternal(final Element item) {
-		final NativeAttribute result = new NativeAttribute();
+		NativeAttribute result = new NativeAttribute();
+
 		result.loadAttributes(item.getChild(result.getElementName()));
 		return result;
 	}
@@ -47,7 +47,8 @@ public final class NativeAttribute
 // -------------------------- OTHER METHODS --------------------------
 
 	public final /*NativeAttribute*/AtomicAttribute deepCopy() {
-		final NativeAttribute result = new NativeAttribute();
+		NativeAttribute result = new NativeAttribute();
+
 		result.value = value;
 		result.invert = invert;
 		return result;

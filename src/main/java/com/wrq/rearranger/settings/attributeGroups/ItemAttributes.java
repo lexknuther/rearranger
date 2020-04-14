@@ -27,8 +27,7 @@ import org.jdom.Element;
 /**
  * Routines to handle attributes common to class members (fields, methods, and inner classes.)
  */
-public abstract class ItemAttributes
-		extends CommonAttributes {
+public abstract class ItemAttributes extends CommonAttributes {
 
 // -------------------------- STATIC METHODS --------------------------
 

@@ -24,13 +24,13 @@ package com.wrq.rearranger.settings.atomicAttributes;
 import com.wrq.rearranger.ModifierConstants;
 import org.jdom.Element;
 
-public final class InitToAnonClassAttribute
-		extends AndNotAttribute {
+public class InitToAnonClassAttribute extends AndNotAttribute {
 
 // -------------------------- STATIC METHODS --------------------------
 
 	public static InitToAnonClassAttribute readExternal(final Element item) {
-		final InitToAnonClassAttribute result = new InitToAnonClassAttribute();
+		InitToAnonClassAttribute result = new InitToAnonClassAttribute();
+
 		result.loadAttributes(item.getChild(result.getElementName()));
 		return result;
 	}
@@ -43,7 +43,7 @@ public final class InitToAnonClassAttribute
 
 // -------------------------- OTHER METHODS --------------------------
 
-	public final /*InitToAnonClassAttribute*/AtomicAttribute deepCopy() {
+	public  /*InitToAnonClassAttribute*/AtomicAttribute deepCopy() {
 		final InitToAnonClassAttribute result = new InitToAnonClassAttribute();
 		result.value = value;
 		result.invert = invert;

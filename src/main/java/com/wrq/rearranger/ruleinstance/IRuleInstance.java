@@ -75,8 +75,7 @@ public interface IRuleInstance {
 
 	/**
 	 * Perform any rearranging based on rule or item relationships indicated by the settings.
-	 *
-	 * @param entries list of items (fields, methods, etc.)
+	 *  @param entries list of items (fields, methods, etc.)
 	 * @param settings
 	 */
 	void rearrangeRuleItems(List<ClassContentsEntry> entries, RearrangerSettings settings);

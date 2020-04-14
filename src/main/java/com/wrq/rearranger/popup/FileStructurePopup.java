@@ -24,6 +24,7 @@ package com.wrq.rearranger.popup;
 import com.intellij.psi.PsiFile;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import com.wrq.rearranger.util.IconUtil;
 import java.awt.Dimension;
@@ -61,9 +62,9 @@ public class FileStructurePopup
 
 // ------------------------------ FIELDS ------------------------------
 
-	final RearrangerSettings settings;
+	private RearrangerSettings settings;
 
-	final PopupTreeComponent treeComponent;
+	private PopupTreeComponent treeComponent;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -75,10 +76,7 @@ public class FileStructurePopup
 		treeComponent = new PopupTreeComponent(settings, resultRuleInstances, psiFileEntry);
 	}
 
-	public FileStructurePopup(
-			RearrangerSettings settings,
-			List<IRuleInstance> resultRuleInstances,
-			final PsiFile psiFile) {
+	public FileStructurePopup(RearrangerSettings settings, List<IRuleInstance> resultRuleInstances, PsiFile psiFile) {
 		this.settings = settings;
 		IFilePopupEntry psiFileEntry = new IFilePopupEntry() {
 
@@ -384,7 +382,7 @@ public class FileStructurePopup
 // --------------------------- main() method ---------------------------
 
 	public static void main(String[] args) {
-		final RearrangerSettings settings = new RearrangerSettings();
+		final RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation();
 		IFilePopupEntry pf = new IFilePopupEntry() {
 
 			@Override

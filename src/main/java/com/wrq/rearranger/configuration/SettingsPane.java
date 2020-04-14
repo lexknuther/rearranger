@@ -91,7 +91,7 @@ public abstract class SettingsPane {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	SettingsPane(final RearrangerSettings settings, List<AttributeGroup> list) {
+	SettingsPane(RearrangerSettings settings, List<AttributeGroup> list) {
 		this.settings = settings;
 		this.list = list;
 		modelData = new ArrayList<ChoicePanel>(list.size());
@@ -100,9 +100,13 @@ public abstract class SettingsPane {
 
 	private void createConfigurationPane() {
 		pane = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEmptyBorder();
+
+		Border border = BorderFactory.createEmptyBorder();
+
 		pane.setBorder(border);
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.weightedNewRow();
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(10, 10, 10, 10);
@@ -111,13 +115,18 @@ public abstract class SettingsPane {
 	}
 
 	private JPanel createScrollableTablePanel() {
-		final JPanel cmlPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+		JPanel cmlPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.weightedLastRow();
 		constraints.fill = GridBagConstraints.BOTH;
-		final JTextField priorityField = new JTextField();
+
+		JTextField priorityField = new JTextField();
+
 		priorityField.setHorizontalAlignment(SwingConstants.RIGHT);
+
 		TableCellEditor priorityEditor = new DefaultCellEditor(priorityField);
+
 		model = new AbstractTableModel() {
 
 			@Override

@@ -36,6 +36,7 @@ import com.wrq.rearranger.rearrangement.Emitter;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.CommentRule;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.settings.RelatedMethodsSettings;
 import com.wrq.rearranger.settings.attributeGroups.IHasGetterSetterDefinition;
 import com.wrq.rearranger.settings.attributeGroups.IRestrictMethodExtraction;
@@ -56,9 +57,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * Corresponds to a method in the source file. Contains structures and logic to handle related method rearrangement.
  */
-public class MethodEntry
-		extends ClassContentsEntry
-		implements IRelatableEntry {
+public class MethodEntry extends ClassContentsEntry implements IRelatableEntry {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -69,14 +68,14 @@ public class MethodEntry
 	 * corresponding setter will be placed in calledMethods.  This allows the same code to rearrange both types of
 	 * related methods.
 	 */
-	List<MethodEntry> calledMethods = new ArrayList<MethodEntry>();
+	List<MethodEntry> calledMethods = new ArrayList<>();
 
-	List<MethodEntry> calledByMethods = new ArrayList<MethodEntry>();
+	List<MethodEntry> calledByMethods = new ArrayList<>();
 
-	List<MethodEntry> overloadedMethods = new ArrayList<MethodEntry>();
+	List<MethodEntry> overloadedMethods = new ArrayList<>();
 
 	//    MethodEntry correspondingSetter = null; // TODO - avoid wrong level for setters
-	List<MethodEntry> correspondingGetterSetters = new ArrayList<MethodEntry>();
+	List<MethodEntry> correspondingGetterSetters = new ArrayList<>();
 
 	private boolean keptWithProperty;
 
@@ -114,13 +113,13 @@ public class MethodEntry
 	 * @param ruleInstance Rule containing parents (callers) of potentially related methods
 	 */
 	public static void rearrangeRelatedItems(
-			List<ClassContentsEntry> entries,
-			IRuleInstance ruleInstance,
-			RelatedMethodsSettings rms) {
-		List<RangeEntry> parentEntries = new ArrayList<RangeEntry>(ruleInstance.getMatches());
+			List<ClassContentsEntry> entries, IRuleInstance ruleInstance, RelatedMethodsSettings rms) {
+		List<RangeEntry> parentEntries = new ArrayList<>(ruleInstance.getMatches());
+
 		for (RangeEntry o : parentEntries) {
 			if (o instanceof IRelatableEntry) {
 				MethodEntry me = (MethodEntry) o;
+
 				if (me.isGetter()) {
 					if (me.keptWithProperty) {
 						if (me.getMatchedRule() != null && me.getMatchedRule().getMatches() != null) {
@@ -393,9 +392,7 @@ public class MethodEntry
 	 * If setting indicates, move all overloaded methods (of the same name) adjacent with the first encountered. Sort in
 	 * the configured order (original order, or by number of parameters).
 	 */
-	public static void handleOverloadedMethods(
-			List<ClassContentsEntry> contents,
-			RearrangerSettings settings) {
+	static void handleOverloadedMethods(List<ClassContentsEntry> contents, RearrangerSettings settings) {
 		if (!settings.isKeepOverloadedMethodsTogether()) {
 			return;
 		}
@@ -419,19 +416,19 @@ public class MethodEntry
 					 * if necessary and, if the head of the list has changed, replace it in the contents array.
 					 */
 					switch (settings.getOverloadedOrder()) {
-						case RearrangerSettings.OVERLOADED_ORDER_RETAIN_ORIGINAL:
+						case RearrangerSettingsImplementation.OVERLOADED_ORDER_RETAIN_ORIGINAL:
 							// list is already in original order, except perhaps that the top-most extracted method
 							// comes first (if there is one).
 							newList.addAll(current.overloadedMethods);
 							break;
-						case RearrangerSettings.OVERLOADED_ORDER_ASCENDING_PARAMETERS:
-						case RearrangerSettings.OVERLOADED_ORDER_DESCENDING_PARAMETERS:
+						case RearrangerSettingsImplementation.OVERLOADED_ORDER_ASCENDING_PARAMETERS:
+						case RearrangerSettingsImplementation.OVERLOADED_ORDER_DESCENDING_PARAMETERS:
 							for (MethodEntry entry : current.overloadedMethods) {
 								boolean inserted = false;
 								for (int index = 0; index < newList.size(); index++) {
 									MethodEntry me = newList.get(index);
 									if (settings.getOverloadedOrder() ==
-											RearrangerSettings.OVERLOADED_ORDER_ASCENDING_PARAMETERS
+											RearrangerSettingsImplementation.OVERLOADED_ORDER_ASCENDING_PARAMETERS
 											? me.getnParameters() > entry.getnParameters()
 											: me.getnParameters() < entry.getnParameters()) {
 										newList.add(index, entry);
@@ -682,12 +679,14 @@ public class MethodEntry
 // --------------------- Interface IPopupTreeRangeEntry ---------------------
 
 	@Override
-	public DefaultMutableTreeNode addToPopupTree(DefaultMutableTreeNode parent, RearrangerSettings settings) {
+	public DefaultMutableTreeNode addToPopupTree(
+			DefaultMutableTreeNode parent,
+			RearrangerSettings settings) {
 		DefaultMutableTreeNode node = new RearrangerTreeNode(this, name);
+
 		parent.add(node);
-		ListIterator li;
 		for (MethodEntry methodEntry : sortedMethods) {
-			if (methodEntry.isSetter() && methodEntry.calledByMethods.size() > 0) {
+			if (methodEntry.isSetter() && !methodEntry.calledByMethods.isEmpty()) {
 				// setters are arranged with getters when "keep getters/setters together" option is checked.
 				// but setters are not really called by getters.  So attach them to the upper level.
 				methodEntry.addToPopupTree(parent, settings);
@@ -801,18 +800,8 @@ public class MethodEntry
 		 * If the method matches an individual rule with its own getter/setter definition, the values of
 		 * getter and setter will be changed to match that rule's definition.
 		 */
-		setGetter(
-				MethodUtil.isGetter(
-						(PsiMethod) end,
-						settings.getDefaultGSDefinition()
-				)
-		);
-		setSetter(
-				MethodUtil.isSetter(
-						(PsiMethod) end,
-						settings.getDefaultGSDefinition()
-				)
-		);
+		setGetter(MethodUtil.isGetter((PsiMethod) end, settings.getDefaultGSDefinition()));
+		setSetter(MethodUtil.isSetter((PsiMethod) end, settings.getDefaultGSDefinition()));
 		for (IRule rule : settings.getItemOrderAttributeList()) {
 			if (rule instanceof IRestrictMethodExtraction) {
 				if (rule.isMatch(this)) {
@@ -848,9 +837,7 @@ public class MethodEntry
 	}
 
 	@Override
-	public void determineSettersAndMethodCalls(
-			RearrangerSettings settings,
-			List<ClassContentsEntry> contents) {
+	public void determineSettersAndMethodCalls(RearrangerSettings settings, List<ClassContentsEntry> contents) {
 		if (isGetter()) {
 			if (settings.isKeepGettersSettersTogether()) {
 				determineSetter(contents, settings); // link getters/setters via correspondingGetterSetter entries
@@ -1119,15 +1106,12 @@ public class MethodEntry
 	 * @param possibleMethods list of methods in this class; call graph is limited to these methods
 	 * @param settings current configuration
 	 */
-	public void determineMethodCalls(
-			final List<ClassContentsEntry> possibleMethods,
-			final RearrangerSettings settings) {
+	public void determineMethodCalls(List<ClassContentsEntry> possibleMethods, RearrangerSettings settings) {
 		/**
 		 * recursively walk the method's code block looking for method calls.
 		 */
-		final PsiMethod thisMethod = (PsiMethod) end;
-		final MethodEntry thisMethodEntry = this;
-
+		PsiMethod thisMethod = (PsiMethod) end;
+		MethodEntry thisMethodEntry = this;
 		JavaRecursiveElementVisitor rev = new JavaRecursiveElementVisitor() {
 
 			@Override
@@ -1174,7 +1158,7 @@ public class MethodEntry
 	 * @param possibleMethods entry list, possibly containing the corresponding setter for this getter.
 	 * @param settings
 	 */
-	public void determineSetter(final List<ClassContentsEntry> possibleMethods, RearrangerSettings settings) {
+	private void determineSetter(List<ClassContentsEntry> possibleMethods, RearrangerSettings settings) {
 		if (!isGetter())      // wasted assertion, already checked before calling
 		{
 			return;

@@ -21,14 +21,12 @@
  */
 package com.wrq.rearranger.settings.atomicAttributes;
 
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,9 +43,9 @@ public abstract class AndNotAttribute extends AtomicAttribute {
 
 	boolean invert;
 
-	private final String valueName;
+	private String valueName;
 
-	private final int modifierBit;
+	private int modifierBit;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -59,44 +57,55 @@ public abstract class AndNotAttribute extends AtomicAttribute {
 // --------------------- GETTER / SETTER METHODS ---------------------
 
 	public final JPanel getAndNotPanel() {
-		final JPanel andNotPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints(GridBagConstraints.WEST);
-		final JCheckBox andBox = new JCheckBox("And");
+		JPanel andNotPanel = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints(GridBagConstraints.WEST);
+		JCheckBox andBox = new JCheckBox("And");
+
 		andBox.setSelected(isValue());
-		final JCheckBox notBox = new JCheckBox("not");
+
+		JCheckBox notBox = new JCheckBox("not");
+
 		notBox.setSelected(isInvert());
 		notBox.setEnabled(andBox.isSelected());
 		notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
-		final JLabel nameLabel = new JLabel(getName());
+
+		JLabel nameLabel = new JLabel(getName());
+
 		nameLabel.setEnabled(andBox.isSelected());
 		andNotPanel.add(andBox, constraints.firstCol());
 		andNotPanel.add(notBox, constraints.nextCol());
 		constraints.insets = new Insets(0, 0, 0, 4);
 		andNotPanel.add(nameLabel, constraints.weightedLastCol());
-		andBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setValue(andBox.isSelected());
-				notBox.setEnabled(andBox.isSelected());
-				nameLabel.setEnabled(andBox.isSelected());
-			}
-
+		andBox.addActionListener(e -> {
+			setValue(andBox.isSelected());
+			notBox.setEnabled(andBox.isSelected());
+			nameLabel.setEnabled(andBox.isSelected());
 		});
-		notBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setInvert(notBox.isSelected());
-				notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
-			}
-
+		notBox.addActionListener(e -> {
+			setInvert(notBox.isSelected());
+			notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
 		});
 		return andNotPanel;
 	}
 
 	private String getName() {
 		return valueName;
+	}
+
+	public int getModifierBit() {
+		return modifierBit;
+	}
+
+	public void setModifierBit(int value) {
+		modifierBit = value;
+	}
+
+	public String getValueName() {
+		return valueName;
+	}
+
+	public void setValueName(String value) {
+		valueName = value;
 	}
 
 	public final boolean isInvert() {
@@ -121,6 +130,7 @@ public abstract class AndNotAttribute extends AtomicAttribute {
 		if (!(obj instanceof AndNotAttribute)) {
 			return false;
 		}
+
 		AndNotAttribute ana = (AndNotAttribute) obj;
 
 		return value == ana.value &&
@@ -140,7 +150,8 @@ public abstract class AndNotAttribute extends AtomicAttribute {
 	}
 
 	final String getElementName() {
-		final StringBuffer sb = new StringBuffer(valueName.length());
+		StringBuffer sb = new StringBuffer(valueName.length());
+
 		sb.append(valueName);
 		sb.replace(0, 1, ("" + sb.charAt(0)).toUpperCase());
 		for (int i = 1; i < sb.length(); i++) {
@@ -163,8 +174,8 @@ public abstract class AndNotAttribute extends AtomicAttribute {
 	}
 
 	public void loadAttributes(final Element item) {
-		value = RearrangerSettings.getBooleanAttribute(item, "value");
-		invert = RearrangerSettings.getBooleanAttribute(item, "invert");
+		value = RearrangerSettingsImplementation.getBooleanAttribute(item, "value");
+		invert = RearrangerSettingsImplementation.getBooleanAttribute(item, "invert");
 	}
 
 }

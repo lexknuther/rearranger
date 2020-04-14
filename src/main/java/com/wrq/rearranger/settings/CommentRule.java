@@ -80,22 +80,21 @@ public class CommentRule implements AttributeGroup, IPopupTreeRangeEntry, IFileP
 
 	private int emitCondition;
 
-	private int nPrecedingRulesToMatch;                    // default 1
+	private int nPrecedingRulesToMatch; // default 1
 
-	private int nSubsequentRulesToMatch;                   // default 1
+	private int nSubsequentRulesToMatch; // default 1
 
-	private boolean allPrecedingRules;                         // if false, ANY preceding rules
+	private boolean allPrecedingRules; // if false, ANY preceding rules
 
-	private boolean allSubsequentRules;                        // if false, ANY subsequent rules
+	private boolean allSubsequentRules; // if false, ANY subsequent rules
 
 	private CommentFillString commentFillString;
 
 // -------------------------- STATIC METHODS --------------------------
 
 	public static CommentRule readExternal(final Element item) {
-		final CommentRule result = new CommentRule();
-
-		final Attribute attr = RearrangerSettings.getAttribute(item, "commentText");
+		CommentRule result = new CommentRule();
+		Attribute attr = RearrangerSettingsImplementation.getAttribute(item, "commentText");
 		// backward compatibility.  Comment text was formerly saved as an attribute.
 		// Newline characters were lost this way.  Now comment text is saved as element text.
 		// If there's no text but there is an attribute, load the old format.  It will be
@@ -108,11 +107,27 @@ public class CommentRule implements AttributeGroup, IPopupTreeRangeEntry, IFileP
 		} else {
 			result.commentText = unescape(text);
 		}
-		result.emitCondition = RearrangerSettings.getIntAttribute(item, "condition", 0);
-		result.nPrecedingRulesToMatch = RearrangerSettings.getIntAttribute(item, "nPrecedingRulesToMatch", 1);
-		result.nSubsequentRulesToMatch = RearrangerSettings.getIntAttribute(item, "nSubsequentRulesToMatch", 1);
-		result.allPrecedingRules = RearrangerSettings.getBooleanAttribute(item, "allPrecedingRules", true);
-		result.allSubsequentRules = RearrangerSettings.getBooleanAttribute(item, "allSubsequentRules", true);
+		result.emitCondition = RearrangerSettingsImplementation.getIntAttribute(item, "condition", 0);
+		result.nPrecedingRulesToMatch = RearrangerSettingsImplementation.getIntAttribute(
+				item,
+				"nPrecedingRulesToMatch",
+				1
+		);
+		result.nSubsequentRulesToMatch = RearrangerSettingsImplementation.getIntAttribute(
+				item,
+				"nSubsequentRulesToMatch",
+				1
+		);
+		result.allPrecedingRules = RearrangerSettingsImplementation.getBooleanAttribute(
+				item,
+				"allPrecedingRules",
+				true
+		);
+		result.allSubsequentRules = RearrangerSettingsImplementation.getBooleanAttribute(
+				item,
+				"allSubsequentRules",
+				true
+		);
 		result.commentFillString = CommentFillString.readExternal(item);
 		return result;
 	}
@@ -187,17 +202,22 @@ public class CommentRule implements AttributeGroup, IPopupTreeRangeEntry, IFileP
 		this.commentFillString = commentFillString;
 	}
 
-	public final JPanel getCommentPanel() {
-		final JPanel commentPanel = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEtchedBorder();
+	public JPanel getCommentPanel() {
+		JPanel commentPanel = new JPanel(new GridBagLayout());
+		Border border = BorderFactory.createEtchedBorder();
+
 		commentPanel.setBorder(border);
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(4, 4, 4, 0);
-		final JLabel emitLabel = new JLabel("Emit comment:");
-		final JRadioButton alwaysButton = new JRadioButton("Always"),
-				whenButton = new JRadioButton("When");
-		final ButtonGroup group = new ButtonGroup();
+
+		JLabel emitLabel = new JLabel("Emit comment:");
+		JRadioButton alwaysButton = new JRadioButton("Always");
+		JRadioButton whenButton = new JRadioButton("When");
+		ButtonGroup group = new ButtonGroup();
+
 		group.add(alwaysButton);
 		group.add(whenButton);
 		if (emitCondition == 0) {
@@ -213,28 +233,40 @@ public class CommentRule implements AttributeGroup, IPopupTreeRangeEntry, IFileP
 		commentPanel.add(whenButton, constraints.weightedLastCol());
 		constraints.insets = new Insets(0, 24, 0, 4);
 		constraints.newRow();
-		final JPanel anyAllPreviousPanel = new AnyAllPanel(true);
+
+		JPanel anyAllPreviousPanel = new AnyAllPanel(true);
+
 		commentPanel.add(anyAllPreviousPanel, constraints.weightedLastCol());
 		constraints.newRow();
 		constraints.insets = new Insets(0, 24, 10, 4);
-		final JPanel anyAllSubsequentPanel = new AnyAllPanel(false);
+
+		JPanel anyAllSubsequentPanel = new AnyAllPanel(false);
+
 		commentPanel.add(anyAllSubsequentPanel, constraints.weightedLastCol());
 		anyAllPreviousPanel.setEnabled(emitCondition > 0);
 		anyAllSubsequentPanel.setEnabled(emitCondition > 0);
-		final JLabel commentLabel = new JLabel("Comment separator text:");
+
+		JLabel commentLabel = new JLabel("Comment separator text:");
+
 		constraints.insets = new Insets(4, 4, 4, 4);
 		constraints.newRow();
 		commentPanel.add(commentLabel, constraints.weightedLastCol());
-		final JTextArea commentArea = new JTextArea(4, 40);
+
+		JTextArea commentArea = new JTextArea(4, 40);
+
 		commentArea.setText(getCommentText());
 		constraints.weightedNewRow();
-		final JScrollPane scrollPane = new JScrollPane(commentArea);
+
+		JScrollPane scrollPane = new JScrollPane(commentArea);
+
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		commentPanel.add(scrollPane, constraints.weightedLastCol());
 		constraints.newRow();
-		final JPanel cfsPanel = commentFillString.getCommentFillStringPanel();
-		final JLabel fillStringLabel = new JLabel("Fill string:");
+
+		JPanel cfsPanel = commentFillString.getCommentFillStringPanel();
+		JLabel fillStringLabel = new JLabel("Fill string:");
+
 		fillStringLabel.setToolTipText(
 				"Occurrences of %FS% in the comment separator text will be replaced with equal \n" +
 						"amounts of the fill string, replicated to make the comment end at the specified column");

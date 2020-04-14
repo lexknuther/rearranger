@@ -89,20 +89,20 @@ public final class InnerClassAttributes
 	public final String toString() {
 		final StringBuffer sb = new StringBuffer(70);
 		sb.append(abAttr.getDescriptiveString());
-		sb.append(plAttr.getProtectionLevelString());
-		sb.append(stAttr.getDescriptiveString());
-		sb.append(fAttr.getDescriptiveString());
+		sb.append(getPlAttr().getProtectionLevelString());
+		sb.append(getStAttr().getDescriptiveString());
+		sb.append(getfAttr().getDescriptiveString());
 		sb.append(enumAttr.getDescriptiveString());
 		if (sb.length() == 0) {
 			sb.append("all inner classes");
 		} else {
 			sb.append("inner classes");
 		}
-		if (nameAttr.isMatch()) {
+		if (getNameAttr().isMatch()) {
 			sb.append(' ');
-			sb.append(nameAttr.getDescriptiveString());
+			sb.append(getNameAttr().getDescriptiveString());
 		}
-		sb.append(sortAttr.getDescriptiveString());
+		sb.append(getSortAttr().getDescriptiveString());
 		return sb.toString();
 	}
 
@@ -175,7 +175,7 @@ public final class InnerClassAttributes
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		caPanel.add(sortAttr.getSortOptionsPanel(), constraints);
+		caPanel.add(getSortAttr().getSortOptionsPanel(), constraints);
 		return caPanel;
 	}
 

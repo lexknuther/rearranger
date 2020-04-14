@@ -66,20 +66,18 @@ public class PopupTreeComponent {
 
 	private Logger logger = Logger.getInstance(getClass());
 
-	private final IFilePopupEntry psiFileEntry;
+	private IFilePopupEntry psiFileEntry;
 
-	private final List<IRuleInstance> resultRuleInstances;
+	private List<IRuleInstance> resultRuleInstances;
 
-	private final RearrangerSettings settings;
+	private RearrangerSettings settings;
 
 	private boolean rearrangementOccurred;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
 	public PopupTreeComponent(
-			RearrangerSettings settings,
-			List<IRuleInstance> resultRuleInstances,
-			final IFilePopupEntry psiFileEntry) {
+			RearrangerSettings settings, List<IRuleInstance> resultRuleInstances, final IFilePopupEntry psiFileEntry) {
 		this.settings = settings;
 		this.resultRuleInstances = resultRuleInstances;
 		this.psiFileEntry = psiFileEntry;

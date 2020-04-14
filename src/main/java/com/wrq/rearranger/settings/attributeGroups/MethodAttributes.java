@@ -25,7 +25,7 @@ import com.intellij.psi.PsiClassInitializer;
 import com.intellij.psi.PsiMethod;
 import com.wrq.rearranger.ModifierConstants;
 import com.wrq.rearranger.entry.RangeEntry;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.settings.atomicAttributes.AbstractAttribute;
 import com.wrq.rearranger.settings.atomicAttributes.ImplementedAttribute;
 import com.wrq.rearranger.settings.atomicAttributes.ImplementingAttribute;
@@ -59,7 +59,7 @@ import org.jdom.Element;
  * modifier, a type discriminator (constructor, getter/setter, other), and a boolean flag indicating whether the method
  * is overridden or not.
  */
-public final class MethodAttributes
+public class MethodAttributes
 		extends ItemAttributes
 		implements IRestrictMethodExtraction,
 		IHasGetterSetterDefinition {
@@ -109,7 +109,8 @@ public final class MethodAttributes
 // -------------------------- STATIC METHODS --------------------------
 
 	public static /*MethodAttributes*/AttributeGroup readExternal(final Element item) {
-		final MethodAttributes result = new MethodAttributes();
+		MethodAttributes result = new MethodAttributes();
+
 		CommonAttributes.readExternal(result, item);
 		result.abstractAttr = AbstractAttribute.readExternal(item);
 		result.syncAttr = SynchronizedAttribute.readExternal(item);
@@ -122,14 +123,15 @@ public final class MethodAttributes
 		result.implementingAttr = ImplementingAttribute.readExternal(item);
 		result.minParamsAttr = MinParamsAttribute.readExternal(item);
 		result.maxParamsAttr = MaxParamsAttribute.readExternal(item);
-		final Element me = item.getChild("Misc");
 
-		result.constructorMethodType = RearrangerSettings.getBooleanAttribute(me, "constructorMethod");
-		result.getterSetterMethodType = RearrangerSettings.getBooleanAttribute(me, "getterSetter");
-		result.canonicalMethodType = RearrangerSettings.getBooleanAttribute(me, "canonicalMethod");
-		result.otherMethodType = RearrangerSettings.getBooleanAttribute(me, "otherMethod");
-		result.invertMethodType = RearrangerSettings.getBooleanAttribute(me, "invertMethod");
-		result.noExtractedMethods = RearrangerSettings.getBooleanAttribute(me, "noExtractedMethods");
+		Element me = item.getChild("Misc");
+
+		result.constructorMethodType = RearrangerSettingsImplementation.getBooleanAttribute(me, "constructorMethod");
+		result.getterSetterMethodType = RearrangerSettingsImplementation.getBooleanAttribute(me, "getterSetter");
+		result.canonicalMethodType = RearrangerSettingsImplementation.getBooleanAttribute(me, "canonicalMethod");
+		result.otherMethodType = RearrangerSettingsImplementation.getBooleanAttribute(me, "otherMethod");
+		result.invertMethodType = RearrangerSettingsImplementation.getBooleanAttribute(me, "invertMethod");
+		result.noExtractedMethods = RearrangerSettingsImplementation.getBooleanAttribute(me, "noExtractedMethods");
 		result.getterSetterDefinition = GetterSetterDefinition.readExternal(item);
 		return result;
 	}
@@ -166,6 +168,10 @@ public final class MethodAttributes
 		return abstractAttr;
 	}
 
+	public void setAbstractAttr(AbstractAttribute value) {
+		abstractAttr = value;
+	}
+
 	public final JPanel getExcludePanel() {
 		final JPanel excludePanel = new JPanel(new GridBagLayout());
 //        final Border border = BorderFactory.createEtchedBorder();
@@ -197,44 +203,88 @@ public final class MethodAttributes
 		return getterSetterDefinition;
 	}
 
+	public void setGetterSetterDefinition(GetterSetterDefinition value) {
+		getterSetterDefinition = value;
+	}
+
 	public ImplementedAttribute getImplementedAttr() {
 		return implementedAttr;
+	}
+
+	public void setImplementedAttr(ImplementedAttribute value) {
+		implementedAttr = value;
 	}
 
 	public ImplementingAttribute getImplementingAttr() {
 		return implementingAttr;
 	}
 
+	public void setImplementingAttr(ImplementingAttribute value) {
+		implementingAttr = value;
+	}
+
 	public MaxParamsAttribute getMaxParamsAttr() {
 		return maxParamsAttr;
+	}
+
+	public void setMaxParamsAttr(MaxParamsAttribute value) {
+		maxParamsAttr = value;
 	}
 
 	public MinParamsAttribute getMinParamsAttr() {
 		return minParamsAttr;
 	}
 
+	public void setMinParamsAttr(MinParamsAttribute value) {
+		minParamsAttr = value;
+	}
+
 	private NativeAttribute getNativeAttr() {
 		return nativeAttr;
+	}
+
+	public void setNativeAttr(NativeAttribute value) {
+		nativeAttr = value;
 	}
 
 	private OverriddenAttribute getOverriddenAttr() {
 		return overriddenAttr;
 	}
 
+	public void setOverriddenAttr(OverriddenAttribute value) {
+		overriddenAttr = value;
+	}
+
 	private OverridingAttribute getOverridingAttr() {
 		return overridingAttr;
+	}
+
+	public void setOverridingAttr(OverridingAttribute value) {
+		overridingAttr = value;
 	}
 
 	public ReturnTypeAttribute getReturnTypeAttr() {
 		return returnTypeAttr;
 	}
 
+	public void setReturnTypeAttr(ReturnTypeAttribute value) {
+		returnTypeAttr = value;
+	}
+
 	public InitializerAttribute getStaticInitAttr() {
 		return staticInitAttr;
 	}
 
+	public void setStaticInitAttr(InitializerAttribute value) {
+		staticInitAttr = value;
+	}
+
 	private SynchronizedAttribute getSyncAttr() {
 		return syncAttr;
+	}
+
+	public void setSyncAttr(SynchronizedAttribute value) {
+		syncAttr = value;
 	}
 
 	public boolean isCanonicalMethodType() {
@@ -320,9 +370,9 @@ public final class MethodAttributes
 		//
 		final StringBuffer sb = new StringBuffer(80);
 
-		sb.append(plAttr.getProtectionLevelString());
-		sb.append(stAttr.getDescriptiveString());
-		sb.append(fAttr.getDescriptiveString());
+		sb.append(getPlAttr().getProtectionLevelString());
+		sb.append(getStAttr().getDescriptiveString());
+		sb.append(getfAttr().getDescriptiveString());
 		sb.append(staticInitAttr.getDescriptiveString());
 		sb.append(nativeAttr.getDescriptiveString());
 		sb.append(syncAttr.getDescriptiveString());
@@ -394,16 +444,16 @@ public final class MethodAttributes
 				}
 			}
 		}
-		if (nameAttr.isMatch()) {
+		if (getNameAttr().isMatch()) {
 			checkPredicate(sb, false);
-			nextPredicate = nameAttr.getDescriptiveString();
+			nextPredicate = getNativeAttr().getDescriptiveString();
 		}
 		if (returnTypeAttr.isMatch()) {
 			checkPredicate(sb, false);
 			nextPredicate = returnTypeAttr.getDescriptiveString();
 		}
 		checkPredicate(sb, true);
-		sb.append(sortAttr.getDescriptiveString());
+		sb.append(getSortAttr().getDescriptiveString());
 		if (noExtractedMethods) {
 			sb.append(" (no extracted methods)");
 		}
@@ -457,7 +507,8 @@ public final class MethodAttributes
 
 	@Override
 	public final void writeExternal(final Element parent) {
-		final Element me = new Element("Method");
+		Element me = new Element("Method");
+
 		writeExternalCommonAttributes(me);
 		abstractAttr.appendAttributes(me);
 		nativeAttr.appendAttributes(me);
@@ -470,7 +521,9 @@ public final class MethodAttributes
 		returnTypeAttr.appendAttributes(me);
 		minParamsAttr.appendAttributes(me);
 		maxParamsAttr.appendAttributes(me);
-		final Element miscElement = new Element("Misc");
+
+		Element miscElement = new Element("Misc");
+
 		me.getChildren().add(miscElement);
 		miscElement.setAttribute("constructorMethod", Boolean.valueOf(constructorMethodType).toString());
 		miscElement.setAttribute("getterSetter", Boolean.valueOf(getterSetterMethodType).toString());
@@ -546,10 +599,13 @@ public final class MethodAttributes
 
 	// End Methods of Interface IRule
 	public JPanel getMethodAttributes() {
-		final JPanel methodPanel = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEtchedBorder();
+		JPanel methodPanel = new JPanel(new GridBagLayout());
+		Border border = BorderFactory.createEtchedBorder();
+
 		methodPanel.setBorder(border);
-		final GridBagConstraints constraints = new GridBagConstraints();
+
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridwidth = 1;
@@ -607,13 +663,14 @@ public final class MethodAttributes
 		constraints.gridy++;
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
-		methodPanel.add(sortAttr.getSortOptionsPanel(), constraints);
+		methodPanel.add(getSortAttr().getSortOptionsPanel(), constraints);
 		return methodPanel;
 	}
 
 	private JPanel getMethodTypePanel() {
-		final JPanel mtPanel = new JPanel(new GridBagLayout());
-		final GridBagConstraints constraints = new GridBagConstraints();
+		JPanel mtPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridwidth = 1;
 		constraints.gridheight = GridBagConstraints.REMAINDER;
@@ -621,7 +678,9 @@ public final class MethodAttributes
 		constraints.weightx = 0.0d;
 		constraints.weighty = 1.0d;
 		constraints.gridx = constraints.gridy = 0;
-		final JCheckBox notBox = new JCheckBox("not");
+
+		JCheckBox notBox = new JCheckBox("not");
+
 		notBox.setSelected(isInvertMethodType());
 		notBox.setForeground(notBox.isSelected() ? Color.BLACK : Color.GRAY);
 		mtPanel.add(notBox, constraints);
@@ -638,13 +697,13 @@ public final class MethodAttributes
 			}
 
 		});
-
 		return mtPanel;
 	}
 
 	private JPanel getMethodTypeInnerPanel() {
-		final JPanel mtPanel = new JPanel(new GridBagLayout());
-		final GridBagConstraints constraints = new GridBagConstraints();
+		JPanel mtPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.gridheight = 1;
 		constraints.anchor = GridBagConstraints.WEST;
@@ -652,15 +711,23 @@ public final class MethodAttributes
 		constraints.weightx = 1.0d;
 		constraints.weighty = 0.0d;
 		constraints.gridx = constraints.gridy = 0;
-		final JCheckBox constructorBox = new JCheckBox("constructor or");
+
+		JCheckBox constructorBox = new JCheckBox("constructor or");
+
 		constructorBox.setSelected(isConstructorMethodType());
-		final JCheckBox getterSetterBox = new JCheckBox();
-		final JButton gsDefButton = new JButton("getter/setter");
-		final JLabel gsOrLabel = new JLabel(" or");
+
+		JCheckBox getterSetterBox = new JCheckBox();
+		JButton gsDefButton = new JButton("getter/setter");
+		JLabel gsOrLabel = new JLabel(" or");
+
 		getterSetterBox.setSelected(isGetterSetterMethodType());
-		final JCheckBox canonicalBox = new JCheckBox("canonical or");
+
+		JCheckBox canonicalBox = new JCheckBox("canonical or");
+
 		canonicalBox.setSelected(isCanonicalMethodType());
-		final JCheckBox otherTypeBox = new JCheckBox("other type");
+
+		JCheckBox otherTypeBox = new JCheckBox("other type");
+
 		otherTypeBox.setSelected(isOtherMethodType());
 		mtPanel.add(constructorBox, constraints);
 		constraints.gridy++;
@@ -680,61 +747,38 @@ public final class MethodAttributes
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
 		mtPanel.add(otherTypeBox, constraints);
-		constructorBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setConstructorMethodType(constructorBox.isSelected());
-			}
-
+		constructorBox.addActionListener(event -> {
+			setConstructorMethodType(constructorBox.isSelected());
 		});
-		getterSetterBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setGetterSetterMethodType(getterSetterBox.isSelected());
-			}
-
+		getterSetterBox.addActionListener(event -> {
+			setGetterSetterMethodType(getterSetterBox.isSelected());
 		});
-		canonicalBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setCanonicalMethodType(canonicalBox.isSelected());
-			}
-
+		canonicalBox.addActionListener(event -> {
+			setCanonicalMethodType(canonicalBox.isSelected());
 		});
-		otherTypeBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				setOtherMethodType(otherTypeBox.isSelected());
-			}
-
+		otherTypeBox.addActionListener(event -> {
+			setOtherMethodType(otherTypeBox.isSelected());
 		});
-		gsDefButton.addActionListener(new ActionListener() {
+		gsDefButton.addActionListener(event -> {
+			GetterSetterDefinition tempgsd = getterSetterDefinition.deepCopy();
+			JPanel gsDefPanel = tempgsd.getGSDefinitionPanel();
+			JOptionPane op = new JOptionPane(
+					gsDefPanel,
+					JOptionPane.PLAIN_MESSAGE,
+					JOptionPane.OK_CANCEL_OPTION,
+					null, null, null
+			);
+			JDialog jd = op.createDialog(null, "Getter/Setter definition");
 
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				GetterSetterDefinition tempgsd = getterSetterDefinition.deepCopy();
-				final JPanel gsDefPanel = tempgsd.getGSDefinitionPanel();
-				final JOptionPane op = new JOptionPane(
-						gsDefPanel,
-						JOptionPane.PLAIN_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION,
-						null, null, null
-				);
-				final JDialog jd = op.createDialog(null, "Getter/Setter definition");
-				jd.setVisible(true);
-				final Object result = op.getValue();
-				if (result != null &&
-						(Integer) result == JOptionPane.OK_OPTION) {
-					getterSetterDefinition = tempgsd;
-				}
+			jd.setVisible(true);
+
+			Object result = op.getValue();
+
+			if (result != null &&
+					(Integer) result == JOptionPane.OK_OPTION) {
+				getterSetterDefinition = tempgsd;
 			}
-
 		});
-
 		return mtPanel;
 	}
 

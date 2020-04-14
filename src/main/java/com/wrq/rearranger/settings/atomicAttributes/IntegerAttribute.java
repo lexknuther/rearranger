@@ -24,7 +24,7 @@ package com.wrq.rearranger.settings.atomicAttributes;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.wrq.rearranger.configuration.IntTextField;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import com.wrq.rearranger.util.MethodUtil;
 import java.awt.Color;
@@ -191,9 +191,9 @@ public abstract class IntegerAttribute extends AtomicAttribute {
 	}
 
 	public final void loadAttributes(final Element item) {
-		match = RearrangerSettings.getBooleanAttribute(item, "match", false);
+		match = RearrangerSettingsImplementation.getBooleanAttribute(item, "match", false);
 		//    opType = RearrangerSettings.getIntAttribute(item, "opType", opType);   -- never load opType, it is immutable
-		value = RearrangerSettings.getIntAttribute(item, "value", 0);
+		value = RearrangerSettingsImplementation.getIntAttribute(item, "value", 0);
 	}
 
 }

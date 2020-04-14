@@ -144,7 +144,9 @@ public class ClassEntry extends ClassContentsEntry {
 // --------------------- Interface IPopupTreeRangeEntry ---------------------
 
 	@Override
-	public DefaultMutableTreeNode addToPopupTree(DefaultMutableTreeNode parent, RearrangerSettings settings) {
+	public DefaultMutableTreeNode addToPopupTree(
+			DefaultMutableTreeNode parent,
+			RearrangerSettings settings) {
 		DefaultMutableTreeNode result = super.addToPopupTree(parent, settings);
 		// now add class contents, if any
 		if (getResultRuleInstances() != null) {
@@ -569,24 +571,20 @@ public class ClassEntry extends ClassContentsEntry {
 		 * methods to the first and remove them from consideration for other alignment.
 		 */
 		MethodEntry.handleOverloadedMethods(getContents(), settings);
-		final GenericRearranger classContentsRearranger =
-				new GenericRearranger(
-						settings.getItemOrderAttributeList(),
-						contents,
-						nestingLevel,
-						settings
-				) {
+		GenericRearranger classContentsRearranger = new GenericRearranger(
+				settings.getItemOrderAttributeList(), contents, nestingLevel, settings
+		) {
 
-					@Override
-					public void rearrangeRelatedItems(
-							List<ClassContentsEntry> entries,
-							List<IRuleInstance> ruleInstanceList) {
-						for (IRuleInstance ruleInstance : ruleInstanceList) {
-							ruleInstance.rearrangeRuleItems(entries, settings);
-						}
-					}
+			@Override
+			public void rearrangeRelatedItems(
+					List<ClassContentsEntry> entries, List<IRuleInstance> ruleInstanceList) {
+				for (IRuleInstance ruleInstance : ruleInstanceList) {
+					ruleInstance.rearrangeRuleItems(entries, settings);
+				}
+			}
 
-				};
+		};
+
 		resultRuleInstances = classContentsRearranger.rearrangeEntries();
 	}
 

@@ -21,7 +21,7 @@
  */
 package com.wrq.rearranger.settings.attributeGroups;
 
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -82,10 +82,10 @@ public class GetterSetterDefinition {
 	}
 
 	public void loadAttributes(Element me) {
-		getterBodyCriterion = RearrangerSettings.getIntAttribute(me, "getterBody");
-		getterNameCriterion = RearrangerSettings.getIntAttribute(me, "getterName");
-		setterBodyCriterion = RearrangerSettings.getIntAttribute(me, "setterBody");
-		setterNameCriterion = RearrangerSettings.getIntAttribute(me, "setterName");
+		getterBodyCriterion = RearrangerSettingsImplementation.getIntAttribute(me, "getterBody");
+		getterNameCriterion = RearrangerSettingsImplementation.getIntAttribute(me, "getterName");
+		setterBodyCriterion = RearrangerSettingsImplementation.getIntAttribute(me, "setterBody");
+		setterNameCriterion = RearrangerSettingsImplementation.getIntAttribute(me, "setterName");
 	}
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -124,21 +124,21 @@ public class GetterSetterDefinition {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(Object obj) {
-		if (obj instanceof GetterSetterDefinition) {
-			GetterSetterDefinition gsd = (GetterSetterDefinition) obj;
-			return gsd.getterBodyCriterion == getterBodyCriterion &&
-					gsd.getterNameCriterion == getterNameCriterion &&
-					gsd.setterBodyCriterion == setterBodyCriterion &&
-					gsd.setterNameCriterion == setterNameCriterion;
-		}
-		return false;
+	public boolean equals(Object value) {
+		GetterSetterDefinition other;
+
+		return value instanceof GetterSetterDefinition &&
+				getterBodyCriterion == (other = (GetterSetterDefinition) value).getterBodyCriterion &&
+				getterNameCriterion == other.getterNameCriterion &&
+				setterBodyCriterion == other.setterBodyCriterion &&
+				setterNameCriterion == other.setterNameCriterion;
 	}
 
 // -------------------------- OTHER METHODS --------------------------
 
 	public final GetterSetterDefinition deepCopy() {
-		final GetterSetterDefinition result = new GetterSetterDefinition();
+		GetterSetterDefinition result = new GetterSetterDefinition();
+
 		result.getterBodyCriterion = getterBodyCriterion;
 		result.getterNameCriterion = getterNameCriterion;
 		result.setterBodyCriterion = setterBodyCriterion;
@@ -147,8 +147,9 @@ public class GetterSetterDefinition {
 	}
 
 	public JPanel getGSDefinitionPanel() {
-		final JPanel gsdPanel = new JPanel(new GridBagLayout());
-		final GridBagConstraints constraints = new GridBagConstraints();
+		JPanel gsdPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.gridheight = 1;
 		constraints.anchor = GridBagConstraints.WEST;

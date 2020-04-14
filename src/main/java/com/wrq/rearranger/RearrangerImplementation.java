@@ -21,17 +21,15 @@
  */
 package com.wrq.rearranger;
 
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.wrq.rearranger.configuration.RearrangerSettingsPanel;
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import java.util.List;
-
 import javax.swing.JComponent;
-import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The rearranger is an IntelliJ IDEA plugin that rearranges the order of class declarations and class member
@@ -39,7 +37,11 @@ import org.jdom.Element;
  * whenever the rearranger plugin is invoked on a Java file, the order of declarations is rearranged according to the
  * configuration.
  */
-public class RearrangerImplementation implements JDOMExternalizable, Rearranger {
+@State(
+		name = RearrangerImplementation.COMPONENT_NAME,
+		storages = @Storage(value = "$APP_CONFIG$/rearranger.xml", exportable = true),
+		reloadable = false)
+public class RearrangerImplementation implements Rearranger {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -51,9 +53,7 @@ public class RearrangerImplementation implements JDOMExternalizable, Rearranger 
 
 	private RearrangerSettingsPanel preferencesPanel;
 
-	private RearrangerSettings settings = new RearrangerSettings();
-
-	private boolean haveReadExternalSettings;
+	private RearrangerSettingsImplementation state = new RearrangerSettingsImplementation();
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -101,12 +101,8 @@ public class RearrangerImplementation implements JDOMExternalizable, Rearranger 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
 	@Override
-	public RearrangerSettings getSettings() {
-		return settings;
-	}
-
-	public void setSettings(RearrangerSettings settings) {
-		this.settings = settings;
+	public RearrangerSettingsImplementation getState() {
+		return state;
 	}
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -123,55 +119,25 @@ public class RearrangerImplementation implements JDOMExternalizable, Rearranger 
 		return null;
 	}
 
-// --------------------- Interface JDOMExternalizable ---------------------
+// --------------------- Interface PersistentStateComponent ---------------------
 
 	@Override
-	public void readExternal(final Element element) //throws InvalidDataException
-	{
-		logger.debug("rearranger.readExternal()");
-		haveReadExternalSettings = true;
-		final List entries = element.getChildren(COMPONENT_NAME);
-		if (entries.size() > 0) {
-			logger.debug("element 'Rearranger' seen; configuration loading");
-			final Element entry = (Element) entries.get(0);
-			logger.debug("element has " + entry.getChildren().size() + " children");
-			settings.readExternal(entry);
-		}
-	}
-
-	@Override
-	public void writeExternal(final Element element) //throws WriteExternalException
-	{
-		logger.debug("rearranger.writeExternal()");
-		final Element our_element = new Element(COMPONENT_NAME);
-		settings.writeExternal(our_element);
-		element.getChildren().clear();
-		element.addContent(our_element);
+	public void loadState(@NotNull RearrangerSettingsImplementation state) {
+		this.state = (RearrangerSettingsImplementation) state.deepCopy();
 	}
 
 // --------------------- Interface UnnamedConfigurable ---------------------
 
 	@Override
 	public JComponent createComponent() {
-		logger.debug("createComponent: haveReadExternalSettings=" + haveReadExternalSettings);
-		RearrangerSettings rs;
-		if (!haveReadExternalSettings) {
-			logger.debug("createComponent: reading default settings");
-			rs = RearrangerSettings.getDefaultSettings();
-			if (rs == null) {
-				logger.debug("createComponent: could not find default settings");
-			}
-			haveReadExternalSettings = true;
-		} else {
-			rs = settings;
-		}
-		preferencesPanel = new RearrangerSettingsPanel(rs);
+		preferencesPanel = new RearrangerSettingsPanel(state);
 		return preferencesPanel;
 	}
 
 	@Override
 	public boolean isModified() {
-		final boolean result = !preferencesPanel.settings.equals(settings);
+		boolean result = !preferencesPanel.settings.equals(state);
+
 		logger.debug("rearranger.isModified(): returning " + result);
 		return result;
 	}
@@ -179,7 +145,7 @@ public class RearrangerImplementation implements JDOMExternalizable, Rearranger 
 	@Override
 	public void apply() {
 		logger.debug("rearranger.apply()");
-		settings = preferencesPanel.settings.deepCopy();
+		state = (RearrangerSettingsImplementation) preferencesPanel.settings.deepCopy();
 	}
 
 	@Override

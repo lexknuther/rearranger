@@ -32,7 +32,8 @@ public class TypeAttribute extends StringAttribute {
 // -------------------------- STATIC METHODS --------------------------
 
 	public static TypeAttribute readExternal(final Element item) {
-		final TypeAttribute result = new TypeAttribute();
+		TypeAttribute result = new TypeAttribute();
+
 		result.loadAttributes(item.getChild("TypeMatch"));
 		return result;
 	}
@@ -46,16 +47,14 @@ public class TypeAttribute extends StringAttribute {
 // ------------------------ CANONICAL METHODS ------------------------
 
 	public final boolean equals(final Object object) {
-		if (!(object instanceof TypeAttribute)) {
-			return false;
-		}
-		return super.equals(object);
+		return object instanceof TypeAttribute && super.equals(object);
 	}
 
 // -------------------------- OTHER METHODS --------------------------
 
 	public final /*TypeAttribute*/AtomicAttribute deepCopy() {
-		final TypeAttribute result = new TypeAttribute();
+		TypeAttribute result = new TypeAttribute();
+
 		deepCopy(result);
 		return result;
 	}

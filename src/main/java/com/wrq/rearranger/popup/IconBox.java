@@ -21,7 +21,7 @@
  */
 package com.wrq.rearranger.popup;
 
-import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.Constraints;
 import com.wrq.rearranger.util.IconUtil;
 import java.awt.Color;
@@ -150,7 +150,7 @@ abstract class IconBox {
 			}
 
 		};
-		final RearrangerSettings settings = new RearrangerSettings();
+		final RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation();
 		IconBox box = new IconBox(panel, constraints, scroll) {
 
 			@Override

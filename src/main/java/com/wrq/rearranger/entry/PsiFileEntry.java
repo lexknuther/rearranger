@@ -36,8 +36,7 @@ import java.util.List;
  * dummy "class" which will parse the file.  Header text will include the package and import statements, and outer
  * classes will be its members.
  */
-public class PsiFileEntry
-		extends ClassEntry {
+public class PsiFileEntry extends ClassEntry {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 

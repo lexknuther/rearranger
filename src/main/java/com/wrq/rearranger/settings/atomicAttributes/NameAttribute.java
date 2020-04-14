@@ -26,12 +26,13 @@ import org.jdom.Element;
 /**
  * Allows item selection by matching its name to a regular expression.
  */
-public final class NameAttribute extends StringAttribute {
+public class NameAttribute extends StringAttribute {
 
 // -------------------------- STATIC METHODS --------------------------
 
-	public static NameAttribute readExternal(final Element item) {
-		final NameAttribute result = new NameAttribute();
+	public static NameAttribute readExternal(Element item) {
+		NameAttribute result = new NameAttribute();
+
 		result.loadAttributes(item.getChild("NameMatch"));
 		return result;
 	}
@@ -44,17 +45,15 @@ public final class NameAttribute extends StringAttribute {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public final boolean equals(final Object object) {
-		if (!(object instanceof NameAttribute)) {
-			return false;
-		}
-		return super.equals(object);
+	public boolean equals(final Object object) {
+		return object instanceof NameAttribute && super.equals(object);
 	}
 
 // -------------------------- OTHER METHODS --------------------------
 
-	public final /*NameAttribute*/AtomicAttribute deepCopy() {
-		final NameAttribute result = new NameAttribute();
+	public /*NameAttribute*/AtomicAttribute deepCopy() {
+		NameAttribute result = new NameAttribute();
+
 		deepCopy(result);
 		return result;
 	}

@@ -32,12 +32,11 @@ import javax.swing.JPanel;
 /**
  * UI code for Class Member (field, method, inner class) dialog.
  */
-final class ClassMemberSettingsPane
-		extends SettingsPane {
+class ClassMemberSettingsPane extends SettingsPane {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	ClassMemberSettingsPane(final RearrangerSettings settings) {
+	ClassMemberSettingsPane(RearrangerSettings settings) {
 		super(settings, settings.getItemOrderAttributeList());
 	}
 

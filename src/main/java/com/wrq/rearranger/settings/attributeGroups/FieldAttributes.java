@@ -39,8 +39,7 @@ import org.jdom.Element;
 /**
  * Routines to handle field attributes not covered by CommonAttributes.
  */
-public final class FieldAttributes
-		extends ItemAttributes {
+public class FieldAttributes extends ItemAttributes {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -54,8 +53,9 @@ public final class FieldAttributes
 
 // -------------------------- STATIC METHODS --------------------------
 
-	public static /*FieldAttributes*/AttributeGroup readExternal(final Element item) {
-		final FieldAttributes result = new FieldAttributes();
+	public static /*FieldAttributes*/AttributeGroup readExternal(Element item) {
+		FieldAttributes result = new FieldAttributes();
+
 		CommonAttributes.readExternal(result, item);
 		result.initToAnonClassAttr = InitToAnonClassAttribute.readExternal(item);
 		result.transientAttr = TransientAttribute.readExternal(item);
@@ -79,16 +79,32 @@ public final class FieldAttributes
 		return initToAnonClassAttr;
 	}
 
+	public void setInitToAnonClassAttr(InitToAnonClassAttribute value) {
+		initToAnonClassAttr = value;
+	}
+
 	private TransientAttribute getTransientAttr() {
 		return transientAttr;
+	}
+
+	public void setTransientAttr(TransientAttribute value) {
+		transientAttr = value;
 	}
 
 	public TypeAttribute getTypeAttr() {
 		return typeAttr;
 	}
 
+	public void setTypeAttr(TypeAttribute value) {
+		typeAttr = value;
+	}
+
 	private VolatileAttribute getVolatileAttr() {
 		return volatileAttr;
+	}
+
+	public void setVolatileAttr(VolatileAttribute value) {
+		volatileAttr = value;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -107,9 +123,9 @@ public final class FieldAttributes
 
 	public final String toString() {
 		final StringBuffer sb = new StringBuffer(70);
-		sb.append(plAttr.getProtectionLevelString());
-		sb.append(stAttr.getDescriptiveString());
-		sb.append(fAttr.getDescriptiveString());
+		sb.append(getPlAttr().getProtectionLevelString());
+		sb.append(getStAttr().getDescriptiveString());
+		sb.append(getfAttr().getDescriptiveString());
 		sb.append(transientAttr.getDescriptiveString());
 		sb.append(volatileAttr.getDescriptiveString());
 
@@ -125,21 +141,21 @@ public final class FieldAttributes
 				sb.append(" which are not initialized to an anonymous class");
 			}
 		}
-		if (nameAttr.isMatch()) {
+		if (getNameAttr().isMatch()) {
 			if (initToAnonClassAttr.isValue()) {
 				sb.append(" and");
 			}
 			sb.append(' ');
-			sb.append(nameAttr.getDescriptiveString());
+			sb.append(getNameAttr().getDescriptiveString());
 		}
 		if (typeAttr.isMatch()) {
-			if (nameAttr.isMatch() || initToAnonClassAttr.isValue()) {
+			if (getNameAttr().isMatch() || initToAnonClassAttr.isValue()) {
 				sb.append(" and");
 			}
 			sb.append(' ');
 			sb.append(typeAttr.getDescriptiveString());
 		}
-		sb.append(sortAttr.getDescriptiveString());
+		sb.append(getSortAttr().getDescriptiveString());
 		return sb.toString();
 	}
 
@@ -149,7 +165,8 @@ public final class FieldAttributes
 
 	@Override
 	public final /*FieldAttributes*/AttributeGroup deepCopy() {
-		final FieldAttributes result = new FieldAttributes();
+		FieldAttributes result = new FieldAttributes();
+
 		deepCopyCommonItems(result);
 		result.initToAnonClassAttr = (InitToAnonClassAttribute) initToAnonClassAttr.deepCopy();
 		result.transientAttr = (TransientAttribute) transientAttr.deepCopy();
@@ -159,8 +176,9 @@ public final class FieldAttributes
 	}
 
 	@Override
-	public final void writeExternal(final Element parent) {
-		final Element child = new Element("Field");
+	public void writeExternal(final Element parent) {
+		Element child = new Element("Field");
+
 		writeExternalCommonAttributes(child);
 		initToAnonClassAttr.appendAttributes(child);
 		transientAttr.appendAttributes(child);
@@ -218,7 +236,7 @@ public final class FieldAttributes
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		plPanel.add(sortAttr.getSortOptionsPanel(), constraints);
+		plPanel.add(getSortAttr().getSortOptionsPanel(), constraints);
 		return plPanel;
 	}
 

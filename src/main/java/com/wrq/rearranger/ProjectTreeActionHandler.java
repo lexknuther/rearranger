@@ -221,10 +221,10 @@ public class ProjectTreeActionHandler extends AnAction {
 
 										@Override
 										public void run() {
-											final Application application = ApplicationManager.getApplication();
-											final RearrangerImplementation rearranger = application.getComponent(
-													RearrangerImplementation.class);
-											RearrangerSettings settings = rearranger.getSettings();
+											Application application = ApplicationManager.getApplication();
+											Rearranger rearranger = application.getComponent(Rearranger.class);
+											RearrangerSettings settings = rearranger.getState();
+
 											settings = settings.deepCopy();
 											// avoid showing confirmation dialog for each file done
 											settings.setAskBeforeRearranging(false);

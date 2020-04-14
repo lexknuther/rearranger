@@ -83,20 +83,20 @@ public class RelatedMethodsSettings {
 	}
 
 	public void loadAttributes(final Element me) {
-		moveExtractedMethods = RearrangerSettings.getBooleanAttribute(me, "moveExtractedMethods");
-		belowFirstCaller = RearrangerSettings.getBooleanAttribute(me, "belowFirstCaller", true);
-		depthFirstOrdering = RearrangerSettings.getBooleanAttribute(me, "depthFirstOrdering", true);
-		ordering = RearrangerSettings.getIntAttribute(
+		moveExtractedMethods = RearrangerSettingsImplementation.getBooleanAttribute(me, "moveExtractedMethods");
+		belowFirstCaller = RearrangerSettingsImplementation.getBooleanAttribute(me, "belowFirstCaller", true);
+		depthFirstOrdering = RearrangerSettingsImplementation.getBooleanAttribute(me, "depthFirstOrdering", true);
+		ordering = RearrangerSettingsImplementation.getIntAttribute(
 				me,
 				"ordering",
 				INVOCATION_ORDER
 		);
-		nonPrivateTreatment = RearrangerSettings.getIntAttribute(
+		nonPrivateTreatment = RearrangerSettingsImplementation.getIntAttribute(
 				me,
 				"nonPrivateTreatment",
 				NON_PRIVATE_EXTRACTED_ANY_CALLERS
 		);
-		commentType = RearrangerSettings.getIntAttribute(
+		commentType = RearrangerSettingsImplementation.getIntAttribute(
 				me,
 				"commentType",
 				COMMENT_TYPE_TOP_LEVEL

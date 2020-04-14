@@ -29,6 +29,7 @@ import com.wrq.rearranger.entry.ClassEntry;
 import com.wrq.rearranger.entry.PsiFileEntry;
 import com.wrq.rearranger.entry.RangeEntry;
 import com.wrq.rearranger.settings.RearrangerSettings;
+import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 
 import java.util.List;
 

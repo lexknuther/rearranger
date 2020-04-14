@@ -58,15 +58,15 @@ public class Spacer {
 
 	private Logger logger = Logger.getInstance(getClass());
 
-	private final Project project;
+	private Project project;
 
-	private final PsiFile psiFile;
+	private PsiFile psiFile;
 
-	private final Document document;
+	private Document document;
 
-	private final PsiElementFactory factory;
+	private PsiElementFactory factory;
 
-	private final RearrangerSettings settings;
+	private RearrangerSettings settings;
 
 	private final char[] newlineChars;
 
@@ -74,7 +74,7 @@ public class Spacer {
 
 	private StringBuffer sb;
 
-	private Map<PsiWhiteSpace, VirtualElement> virtualElements = new HashMap<PsiWhiteSpace, VirtualElement>();
+	private Map<PsiWhiteSpace, VirtualElement> virtualElements = new HashMap<>();
 
 // --------------------------- CONSTRUCTORS ---------------------------
 

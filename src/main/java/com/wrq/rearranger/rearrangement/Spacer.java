@@ -23,16 +23,12 @@ package com.wrq.rearranger.rearrangement;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassInitializer;
 import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiJavaToken;
@@ -58,13 +54,9 @@ public class Spacer {
 
 	private Logger logger = Logger.getInstance(getClass());
 
-	private Project project;
-
 	private PsiFile psiFile;
 
 	private Document document;
-
-	private PsiElementFactory factory;
 
 	private RearrangerSettings settings;
 
@@ -78,13 +70,11 @@ public class Spacer {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	public Spacer(Project project, PsiFile psiFile, Document document, RearrangerSettings settings) {
-		this.project = project;
+	public Spacer(PsiFile psiFile, Document document, RearrangerSettings settings) {
 		this.psiFile = psiFile;
 		this.document = document;
 		this.settings = settings;
 		changesMade = false;
-		factory = JavaPsiFacade.getInstance(project).getElementFactory();
 
 		int size = 0;
 
@@ -139,11 +129,6 @@ public class Spacer {
 						sb.append('\n');
 					}
 				}
-			}
-
-			@Override
-			public void visitAnonymousClass(PsiAnonymousClass psiAnonymousClass) {
-				super.visitAnonymousClass(psiAnonymousClass);
 			}
 
 			@Override
@@ -344,6 +329,7 @@ public class Spacer {
 			@Override
 			public void visitCodeBlock(PsiCodeBlock psiCodeBlock) {
 				int oldbias;
+
 				if (!(psiCodeBlock.getParent() instanceof PsiMethod) &&
 						settings.isRemoveBlanksInsideCodeBlocks()) {
 					oldbias = bias;

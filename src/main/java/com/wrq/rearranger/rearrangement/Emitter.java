@@ -30,21 +30,21 @@ import java.util.List;
 /**
  * Emits a new document from the rearranged entries.
  */
-public final class Emitter {
+public class Emitter {
 
 // ------------------------------ FIELDS ------------------------------
 
-	private final PsiFile psiFile;
+	private PsiFile psiFile;
 
-	private final List<IRuleInstance> resultRuleInstances;
+	private List<IRuleInstance> resultRuleInstances;
 
-	private final Document document;
+	private Document document;
 
 	private StringBuffer stringBuffer;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-	public Emitter(final PsiFile psiFile, final List<IRuleInstance> resultRuleInstances, final Document document) {
+	public Emitter(PsiFile psiFile, List<IRuleInstance> resultRuleInstances, Document document) {
 		this.psiFile = psiFile;
 		this.resultRuleInstances = resultRuleInstances;
 		this.document = document;
@@ -73,11 +73,10 @@ public final class Emitter {
 	}
 
 	public void emitRuleInstances(Iterable<IRuleInstance> resultRuleInstances) {
-		if (resultRuleInstances == null) {
-			return;
-		}
-		for (IRuleInstance ruleInstance : resultRuleInstances) {
-			ruleInstance.emit(this);
+		if (resultRuleInstances != null) {
+			for (IRuleInstance ruleInstance : resultRuleInstances) {
+				ruleInstance.emit(this);
+			}
 		}
 	}
 

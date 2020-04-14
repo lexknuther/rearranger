@@ -48,7 +48,6 @@ import com.wrq.rearranger.rearrangement.Parser;
 import com.wrq.rearranger.rearrangement.Spacer;
 import com.wrq.rearranger.ruleinstance.IRuleInstance;
 import com.wrq.rearranger.settings.RearrangerSettings;
-import com.wrq.rearranger.settings.RearrangerSettingsImplementation;
 import com.wrq.rearranger.util.CommentUtil;
 import java.awt.dnd.DragSource;
 
@@ -178,7 +177,7 @@ public class RearrangerActionHandler extends EditorActionHandler {
 		logger.debug("respacing document");
 
 		PsiDocumentManager.getInstance(project).commitDocument(document);
-		Spacer spacer = new Spacer(project, psiFile, document, settings);
+		Spacer spacer = new Spacer(psiFile, document, settings);
 
 		if (spacer.respace()) {
 			PsiDocumentManager.getInstance(project).commitDocument(document);

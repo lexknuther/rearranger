@@ -1,11 +1,15 @@
 <idea-plugin>
 	<id>com.wrq.rearranger</id>
-	<name>Rearranger (2020)</name>
-	<vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
-	<description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
-    ]]></description>
+	<name>Rearranger</name>
+	<version>6.0.0</version>
+	<change-notes>
+1) Version 6.0.0: refactored plugin with support for IntelliJ >= 2020.1.
+	</change-notes>
+	<vendor email="dave.kriewall at gmail.com" url="">Dave Kriewall</vendor>
+	<description><![CDATA[Rearranges (reorders) class and class member declarations according to a user-specified order and/or method call hierarchy;
+generates section-marking comments;
+provides several controls for spacing within and between methods and classes; and
+permits the user to manually rearrange items.]]></description>
 	<!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
 		 on how to target different products -->
 	<depends>com.intellij.modules.platform</depends>
@@ -16,18 +20,18 @@
 							serviceImplementation="com.wrq.rearranger.RearrangerImplementation"/>
 	</extensions>
 	<actions>
-		<action id="Rearranger2020" class="com.wrq.rearranger.RearrangerAction" text="Rearranger (2020)"
+		<action id="Rearranger" class="com.wrq.rearranger.RearrangerAction" text="Rearranger"
 				description="Rearrange class and class member declarations according to a user-specified order.">
 			<keyboard-shortcut first-keystroke="control alt shift R" keymap="$default"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="last"/>
 			<add-to-group group-id="EditMenu" anchor="last"/>
 		</action>
-		<action id="RearrangeProjectTree" class="com.wrq.rearranger.ProjectTreeActionHandler" text="Rearranger (2020)"
+		<action id="RearrangeProjectTree" class="com.wrq.rearranger.ProjectTreeActionHandler" text="Rearranger"
 				description="Rearrange class and class member declarations according to a user-specified order.">
 			<!--            <add-to-group group-id="EditMenu" anchor="last"/>      -->
 			<add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
 		</action>
-		<action id="LiveRearranger2020" class="com.wrq.rearranger.LiveRearrangerAction" text="Live Rearranger (2020)"
+		<action id="LiveRearranger" class="com.wrq.rearranger.LiveRearrangerAction" text="Live Rearranger"
 				description="Permits user to manually rearrange class and class member declarations.">
 			<keyboard-shortcut first-keystroke="ctrl COMMA" keymap="$default"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="last"/>

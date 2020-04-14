@@ -47,7 +47,7 @@ public class RearrangerImplementation implements Rearranger {
 
 	public static final String COMPONENT_NAME = "Rearranger";
 
-	public static final String VERSION = "5.5";
+	public static final String VERSION = "6.0.0";
 
 	private static final Logger logger = Logger.getInstance(RearrangerImplementation.class);
 

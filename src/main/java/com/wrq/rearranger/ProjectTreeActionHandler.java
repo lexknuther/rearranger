@@ -23,7 +23,7 @@ package com.wrq.rearranger;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -43,10 +43,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,33 +68,20 @@ import org.apache.log4j.BasicConfigurator;
  */
 public class ProjectTreeActionHandler extends AnAction {
 
-// ------------------------------ FIELDS ------------------------------
-
-	private Logger logger = Logger.getInstance(getClass());
-
 // -------------------------- OTHER METHODS --------------------------
 
 	@Override
 	public final void actionPerformed(final AnActionEvent anActionEvent) {
-		logger.debug("entered actionPerformed");
 		// we're being called on the Swing event dispatch thread.  Spin off another thread to do the
 		// rearranging and let Swing's thread go.
-		Thread t = new Thread(
-				new Runnable() {
+		Thread thread = new Thread(new RearrangeIt(anActionEvent.getDataContext()), "RearrangerThread");
 
-					@Override
-					public void run() {
-						new RearrangeIt(anActionEvent.getDataContext()).run();
-					}
-
-				}, "RearrangerThread"
-		);
-		t.start();
+		thread.start();
 	}
 
 // -------------------------- INNER CLASSES --------------------------
 
-	abstract class VirtualFileVisitor {
+	private abstract static class VirtualFileVisitor {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -104,13 +89,14 @@ public class ProjectTreeActionHandler extends AnAction {
 
 // -------------------------- OTHER METHODS --------------------------
 
-		final void accept(final VirtualFile f) {
-			if (f != null) {
-				visitVirtualFile(f);
+		void accept(VirtualFile virtualFile) {
+			if (virtualFile != null) {
+				visitVirtualFile(virtualFile);
 			}
-			final VirtualFile[] vfa = f.getChildren();
-			if (vfa != null) {
-				for (VirtualFile aVfa : vfa) {
+			VirtualFile[] children = virtualFile.getChildren();
+
+			if (children != null) {
+				for (VirtualFile aVfa : children) {
 					if (!cancel) {
 						accept(aVfa);
 					}
@@ -118,29 +104,30 @@ public class ProjectTreeActionHandler extends AnAction {
 			}
 		}
 
-		abstract void visitVirtualFile(VirtualFile f);
+		abstract void visitVirtualFile(VirtualFile virtualFile);
 
 	}
 
-	final class RearrangeIt
-			implements Runnable {
+	private static class RearrangeIt implements Runnable {
 
 // ------------------------------ FIELDS ------------------------------
 
-		final DataContext dc;
+		private DataContext dataContext;
 
-		final Project project;
+		private Project project;
 
-		final JProgressBar bar = new JProgressBar(SwingConstants.HORIZONTAL);
+		private JProgressBar progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 
-		final JLabel filename = new JLabel();
+		private JLabel filename = new JLabel();
+
+		private Logger logger = Logger.getInstance(getClass());
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-		public RearrangeIt(final DataContext dc) {
-			this.dc = dc;
-			if (dc != null) {
-				project = (Project) dc.getData(DataConstants.PROJECT);
+		private RearrangeIt(final DataContext dataContext) {
+			this.dataContext = dataContext;
+			if (dataContext != null) {
+				project = dataContext.getData(CommonDataKeys.PROJECT);
 			} else {
 				project = null;
 			}
@@ -151,105 +138,80 @@ public class ProjectTreeActionHandler extends AnAction {
 // --------------------- Interface Runnable ---------------------
 
 		@Override
-		public final void run() {
-			final VirtualFile virtualFile = (VirtualFile) dc.getData(DataConstants.VIRTUAL_FILE);
-			final List<VirtualFile> files = new ArrayList<VirtualFile>();
-			final IntHolder count = new IntHolder();
-			final VirtualFileVisitor counter = new VirtualFileVisitor() {
+		public void run() {
+			VirtualFile virtualFile = dataContext.getData(CommonDataKeys.VIRTUAL_FILE);
+			List<VirtualFile> files = new ArrayList<VirtualFile>();
+			IntHolder count = new IntHolder();
+			VirtualFileVisitor counter = new VirtualFileVisitor() {
 
 				@Override
-				void visitVirtualFile(final VirtualFile file) {
-					if (!file.isDirectory()) {
-						count.n++;
-						logger.debug("" + count.n + ": file " + file.getName());
-						files.add(file);
+				void visitVirtualFile(VirtualFile virtualFile) {
+					if (!virtualFile.isDirectory()) {
+						count.value++;
+						logger.debug("" + count.value + ": file " + virtualFile.getName());
+						files.add(virtualFile);
 					}
 				}
 
 			};
 
-			final Application application = ApplicationManager.getApplication();
-			application.runReadAction(
-					new Runnable() {
+			Application application = ApplicationManager.getApplication();
 
-						@Override
-						public void run() {
-							counter.accept(virtualFile);
-						}
+			application.runReadAction(() -> counter.accept(virtualFile));
+			logger.debug("counted " + count.value + " files");
 
-					}
-			);
+			RearrangerActionHandler rah = new RearrangerActionHandler();
+			PsiDocumentManager dm = PsiDocumentManager.getInstance(project);
+			PsiManager pm = PsiManager.getInstance(project);
+			BooleanHolder cancelled = new BooleanHolder();
+			JDialog dialog = getProgressFrame(cancelled, count.value);
 
-			logger.debug("counted " + count.n + " files");
-			final RearrangerActionHandler rah = new RearrangerActionHandler();
-			final PsiDocumentManager dm = PsiDocumentManager.getInstance(project);
-			final PsiManager pm = PsiManager.getInstance(project);
-			final BoolHolder cancelled = new BoolHolder();
-			final JDialog dialog = getProgressFrame(cancelled, count.n);
 			dialog.setVisible(true);
-			for (int currentCount = 0; currentCount < files.size(); currentCount++) {
-				if (cancelled.value) {
-					logger.debug("cancelled rearrangement");
-					break;
-				}
-				final VirtualFile f = files.get(currentCount);
-				final int k = currentCount;
-				Runnable fn = new Runnable() {
+			for (int currentCount = 0; !cancelled.value && currentCount < files.size(); currentCount++) {
+				VirtualFile f = files.get(currentCount);
+				int k = currentCount;
+				Runnable fn = () -> {
+					PsiFile psiFile = pm.findFile(f);
 
-					@Override
-					public void run() {
-						final PsiFile psiFile = pm.findFile(f);
-						logger.debug("SDT setting filename to " + psiFile.getName());
-						filename.setText(psiFile.getName());
-						filename.repaint();
-					}
-
+					logger.debug("SDT setting filename to " + psiFile.getName());
+					filename.setText(psiFile.getName());
 				};
-				Runnable r = new Runnable() {
+				Runnable r = () -> {
+					PsiFile psiFile = pm.findFile(f);
 
-					@Override
-					public void run() {
-						final PsiFile psiFile = pm.findFile(f);
-						if (psiFile != null &&
-								psiFile.getName().endsWith(".java") &&
-								psiFile.isWritable()) {
-							logger.debug("SDT rearranging file " + psiFile.getName());
-							final Document document = dm.getDocument(psiFile);
-							final Application application = ApplicationManager.getApplication();
-							application.runWriteAction(
-									new Runnable() {
+					if (psiFile != null &&
+							psiFile.getName().endsWith(".java") &&
+							psiFile.isWritable()) {
+						logger.debug("SDT rearranging file " + psiFile.getName());
 
-										@Override
-										public void run() {
-											Application application = ApplicationManager.getApplication();
-											Rearranger rearranger = application.getComponent(Rearranger.class);
-											RearrangerSettings settings = rearranger.getState();
+						Document document = dm.getDocument(psiFile);
 
-											settings = settings.deepCopy();
-											// avoid showing confirmation dialog for each file done
-											settings.setAskBeforeRearranging(false);
-											rah.runWriteActionRearrangement(project, document, psiFile, settings);
-										}
+						application.runWriteAction(
+								() -> {
+									Rearranger rearranger = application.getComponent(Rearranger.class);
+									RearrangerSettings settings = rearranger.getState();
 
-									}
-							);
-						}
-						if (!cancelled.value) {
-							logger.debug("SDT setting progress bar value to " + (k + 1));
-							bar.setValue(k + 1);
-							bar.repaint();
-						}
+									settings = settings.deepCopy();
+									// avoid showing confirmation dialog for each file done
+									settings.setAskBeforeRearranging(false);
+									rah.runWriteActionRearrangement(project, document, psiFile, settings);
+								}
+						);
 					}
-
+					if (!cancelled.value) {
+						logger.debug("SDT setting progress bar value to " + (k + 1));
+						progressBar.setValue(k + 1);
+						progressBar.repaint();
+					}
 				};
 
 				try {
 					SwingUtilities.invokeAndWait(fn);
 					SwingUtilities.invokeAndWait(r);
-				} catch (InterruptedException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (InterruptedException exception) {
+					exception.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (InvocationTargetException exception) {
+					exception.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 				}
 			}
 			dialog.setVisible(false);
@@ -258,44 +220,44 @@ public class ProjectTreeActionHandler extends AnAction {
 
 // -------------------------- OTHER METHODS --------------------------
 
-		final JDialog getProgressFrame(final BoolHolder cancelled, final int max) {
+		JDialog getProgressFrame(BooleanHolder cancelled, int max) {
 			Object parent = null;
+
 			if (project != null) {
 				parent = WindowManager.getInstance().suggestParentWindow(project);
 			}
 			logger.debug("suggested parent window=" + parent);
-			final JDialog dialog = parent == null ?
+
+			JDialog result = parent == null ?
 					new JDialog() :
 					parent instanceof JDialog ?
 							new JDialog((JDialog) parent) :
 							new JDialog((JFrame) parent);
-			final Container pane = dialog.getContentPane();
-			final JLabel rearrangingLabel = new JLabel("Rearranging files, please wait...");
-			final JPanel progressPanel = new JPanel(new GridBagLayout());
-			final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+			Container pane = result.getContentPane();
+			JLabel rearrangingLabel = new JLabel("Rearranging files, please wait...");
+			JPanel progressPanel = new JPanel(new GridBagLayout());
+			Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 			constraints.newRow();
 			constraints.insets = new Insets(15, 15, 0, 0);
 			progressPanel.add(rearrangingLabel, constraints.weightedLastCol());
 			constraints.newRow();
-			bar.setMinimum(0);
-			bar.setMaximum(max);
-			bar.setPreferredSize(new Dimension(500, 15));
-			bar.setMinimumSize(new Dimension(500, 15));
-			bar.setStringPainted(true);
+			progressBar.setMinimum(0);
+			progressBar.setMaximum(max);
+			progressBar.setPreferredSize(new Dimension(500, 15));
+			progressBar.setMinimumSize(new Dimension(500, 15));
+			progressBar.setStringPainted(true);
 			constraints.insets = new Insets(15, 15, 5, 15);
-			progressPanel.add(bar, constraints.weightedFirstCol());
+			progressPanel.add(progressBar, constraints.weightedFirstCol());
 			constraints.insets = new Insets(9, 0, 5, 15);
-			final JButton cancelButton = new JButton("Cancel");
+
+			JButton cancelButton = new JButton("Cancel");
+
 			cancelButton.addActionListener(
-					new ActionListener() {
-
-						@Override
-						public void actionPerformed(final ActionEvent e) {
-							logger.debug("cancel button pressed");
-							filename.setText("cancelling...");
-							cancelled.value = true;
-						}
-
+					event -> {
+						logger.debug("cancel button pressed");
+						filename.setText("cancelling...");
+						cancelled.value = true;
 					}
 			);
 
@@ -304,74 +266,40 @@ public class ProjectTreeActionHandler extends AnAction {
 			constraints.insets = new Insets(0, 15, 15, 0);
 			filename.setSize(500, 15);
 			filename.setPreferredSize(new Dimension(500, 15));
-//        filename.setFont(new Font("dialog", Font.PLAIN, 12));
 			progressPanel.add(filename, constraints.weightedLastCol());
 			pane.add(progressPanel, BorderLayout.CENTER);
-			dialog.setTitle(RearrangerImplementation.COMPONENT_NAME);
-			dialog.addWindowListener(
-					new WindowListener() {
+			result.setTitle(RearrangerImplementation.COMPONENT_NAME);
+			result.addWindowListener(
+					new WindowAdapter() {
 
 						@Override
-						public void windowClosed(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
-						@Override
-						public void windowActivated(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
-						@Override
-						public void windowClosing(final WindowEvent e) {
+						public void windowClosing(WindowEvent event) {
 							logger.debug("dialog closed, cancel Rearranger");
 							filename.setText("cancelling...");
 							cancelled.value = true;
 						}
 
-						@Override
-						public void windowDeactivated(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
-						@Override
-						public void windowDeiconified(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
-						@Override
-						public void windowIconified(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
-						@Override
-						public void windowOpened(final WindowEvent e) {
-							//To change body of implemented methods use Options | File Templates.
-						}
-
 					}
 			);
-
-			dialog.pack();
-			return dialog;
+			result.pack();
+			return result;
 		}
 
-// -------------------------- INNER CLASSES --------------------------
+	}
 
-		class BoolHolder {
+	private static class BooleanHolder {
 
 // ------------------------------ FIELDS ------------------------------
 
-			boolean value;
+		boolean value;
 
-		}
+	}
 
-		final class IntHolder {
+	private static class IntHolder {
 
 // ------------------------------ FIELDS ------------------------------
 
-			public int n;
-
-		}
+		public int value;
 
 	}
 
@@ -380,34 +308,33 @@ public class ProjectTreeActionHandler extends AnAction {
 	/**
 	 * Test progress bar functionality.  Read 10 "filenames" from console, pausing between each to update the progress
 	 * bar dialog.  Handle cancel button and dialog window close button properly.
-	 *
-	 * @param args
 	 */
-	public static void main(final String[] args) {
+	public static void main(String[] arguments) {
 		BasicConfigurator.configure();
-// test the progress bar.
-		final BufferedReader reader;
-		final ProjectTreeActionHandler ptah = new ProjectTreeActionHandler();
-		final RearrangeIt ri = ptah.new RearrangeIt(null);
-		final RearrangeIt.IntHolder cancelled = ri.new IntHolder();
-		reader = new BufferedReader(new InputStreamReader(System.in));
-		RearrangeIt.BoolHolder c = ri.new BoolHolder();
+		BufferedReader reader;
+		RearrangeIt ri = new RearrangeIt(null);
+		IntHolder cancelled = new IntHolder();
 
-		final JDialog dialog = ri.getProgressFrame(c, 10);
+		reader = new BufferedReader(new InputStreamReader(System.in));
+
+		BooleanHolder c = new BooleanHolder();
+		JDialog dialog = ri.getProgressFrame(c, 10);
 		int count = 0;
+
 		dialog.pack();
 		dialog.setVisible(true);
-		while (count <= 10 && cancelled.n == 0) {
-			String s = null;
+		while (count <= 10 && cancelled.value == 0) {
+			String line = null;
+
 			try {
-				s = reader.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
+				line = reader.readLine();
+			} catch (IOException exception) {
+				exception.printStackTrace();
 			}
-			if (cancelled.n == 0) {
-				ri.filename.setText(s);
+			if (cancelled.value == 0) {
+				ri.filename.setText(line);
 				count++;
-				ri.bar.setValue(count);
+				ri.progressBar.setValue(count);
 			}
 		}
 		dialog.setVisible(false);

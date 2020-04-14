@@ -125,17 +125,16 @@ public abstract class CommonAttributes implements AttributeGroup, IPrioritizable
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof CommonAttributes)) {
-			return false;
-		}
-		final CommonAttributes ca = (CommonAttributes) obj;
-		return plAttr.equals(ca.plAttr) &&
-				stAttr.equals(ca.stAttr) &&
-				fAttr.equals(ca.fAttr) &&
-				nameAttr.equals(ca.nameAttr) &&
-				sortAttr.equals(ca.sortAttr) &&
-				priority == ca.priority;
+	public boolean equals(Object value) {
+		CommonAttributes other;
+
+		return value instanceof CommonAttributes &&
+				plAttr.equals((other = (CommonAttributes) value).plAttr) &&
+				stAttr.equals(other.stAttr) &&
+				fAttr.equals(other.fAttr) &&
+				nameAttr.equals(other.nameAttr) &&
+				sortAttr.equals(other.sortAttr) &&
+				priority == other.priority;
 	}
 
 // ------------------------ INTERFACE METHODS ------------------------

@@ -38,7 +38,7 @@ public class ForceBlankLineSetting {
 
 	private boolean force;
 
-	private int nBlankLines;
+	private int blankLineCount;
 
 	private boolean before;
 
@@ -63,12 +63,8 @@ public class ForceBlankLineSetting {
 		ForceBlankLineSetting result = new ForceBlankLineSetting(before, openBrace, object, name);
 
 		result.setForce(force);
-		result.setnBlankLines(nBlankLines);
+		result.setBlankLineCount(nBlankLines);
 		return result;
-	}
-
-	public void setnBlankLines(int nBlankLines) {
-		this.nBlankLines = nBlankLines;
 	}
 
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -76,7 +72,7 @@ public class ForceBlankLineSetting {
 	public ForceBlankLineSetting() {
 	}
 
-	public ForceBlankLineSetting(boolean before, boolean openBrace, int object, String name) {
+	ForceBlankLineSetting(boolean before, boolean openBrace, int object, String name) {
 		this.before = before;
 		this.openBrace = openBrace;
 		this.object = object;
@@ -85,12 +81,36 @@ public class ForceBlankLineSetting {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
+	public int getBlankLineCount() {
+		return blankLineCount;
+	}
+
+	public void setBlankLineCount(int value) {
+		blankLineCount = value;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String value) {
+		name = value;
+	}
+
 	public int getObject() {
 		return object;
 	}
 
+	public void setObject(int value) {
+		object = value;
+	}
+
 	public boolean isBefore() {
 		return before;
+	}
+
+	public void setBefore(boolean value) {
+		before = value;
 	}
 
 	public boolean isForce() {
@@ -105,33 +125,27 @@ public class ForceBlankLineSetting {
 		return openBrace;
 	}
 
+	public void setOpenBrace(boolean value) {
+		openBrace = value;
+	}
+
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof ForceBlankLineSetting)) {
-			return false;
-		}
-		final ForceBlankLineSetting fbls = (ForceBlankLineSetting) obj;
-		if (fbls.force != force) {
-			return false;
-		}
-		if (fbls.nBlankLines != nBlankLines) {
-			return false;
-		}
-		if (fbls.before != before) {
-			return false;
-		}
-		if (fbls.openBrace != openBrace) {
-			return false;
-		}
-		return fbls.object == object;
+	public boolean equals(Object value) {
+		ForceBlankLineSetting other;
+
+		return value instanceof ForceBlankLineSetting &&
+				force == (other = (ForceBlankLineSetting) value).force &&
+				blankLineCount == other.blankLineCount &&
+				openBrace == other.openBrace &&
+				object == other.object;
 	}
 
 	public String toString() {
 		return name + ": " + (before ? "before " : "after ") +
 				getObjectName() +
 				(openBrace ? " open brace" : " close brace") +
-				(force ? ", force " + nBlankLines + " lines" : ", leave intact");
+				(force ? ", force " + blankLineCount + " lines" : ", leave intact");
 	}
 
 	public String getObjectName() {
@@ -144,20 +158,16 @@ public class ForceBlankLineSetting {
 		ForceBlankLineSetting result = new ForceBlankLineSetting(before, openBrace, object, name);
 
 		result.force = force;
-		result.nBlankLines = nBlankLines;
+		result.blankLineCount = blankLineCount;
 		return result;
 	}
 
-	public int getnBlankLines() {
-		return nBlankLines;
-	}
-
 	public void writeExternal(Element entry) {
-		Element fblsElement = new Element(name);
+		Element element = new Element(name);
 
-		entry.getChildren().add(fblsElement);
-		fblsElement.setAttribute("Force", Boolean.valueOf(force).toString());
-		fblsElement.setAttribute("nBlankLines", "" + nBlankLines);
+		entry.getChildren().add(element);
+		element.setAttribute("Force", Boolean.toString(force));
+		element.setAttribute("nBlankLines", String.valueOf(blankLineCount));
 	}
 
 }

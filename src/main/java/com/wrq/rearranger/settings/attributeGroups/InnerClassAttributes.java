@@ -70,40 +70,48 @@ public final class InnerClassAttributes
 		return abAttr;
 	}
 
+	public void setAbAttr(AbstractAttribute value) {
+		abAttr = value;
+	}
+
 	public EnumAttribute getEnumAttr() {
 		return enumAttr;
 	}
 
-// ------------------------ CANONICAL METHODS ------------------------
-
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof InnerClassAttributes)) {
-			return false;
-		}
-		final InnerClassAttributes ica = (InnerClassAttributes) obj;
-		return super.equals(ica) &&
-				abAttr.equals(ica.abAttr) &&
-				enumAttr.equals(ica.enumAttr);
+	public void setEnumAttr(EnumAttribute value) {
+		enumAttr = value;
 	}
 
-	public final String toString() {
-		final StringBuffer sb = new StringBuffer(70);
-		sb.append(abAttr.getDescriptiveString());
-		sb.append(getPlAttr().getProtectionLevelString());
-		sb.append(getStAttr().getDescriptiveString());
-		sb.append(getfAttr().getDescriptiveString());
-		sb.append(enumAttr.getDescriptiveString());
-		if (sb.length() == 0) {
-			sb.append("all inner classes");
+// ------------------------ CANONICAL METHODS ------------------------
+
+	public boolean equals(Object value) {
+		InnerClassAttributes other;
+
+		return value instanceof InnerClassAttributes &&
+				super.equals(other = (InnerClassAttributes) value) &&
+				abAttr.equals(other.abAttr) &&
+				enumAttr.equals(other.enumAttr);
+	}
+
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer(70);
+
+		stringBuffer.append(abAttr.getDescriptiveString());
+		stringBuffer.append(getPlAttr().getProtectionLevelString());
+		stringBuffer.append(getStAttr().getDescriptiveString());
+		stringBuffer.append(getfAttr().getDescriptiveString());
+		stringBuffer.append(enumAttr.getDescriptiveString());
+		if (stringBuffer.length() == 0) {
+			stringBuffer.append("all inner classes");
 		} else {
-			sb.append("inner classes");
+			stringBuffer.append("inner classes");
 		}
 		if (getNameAttr().isMatch()) {
-			sb.append(' ');
-			sb.append(getNameAttr().getDescriptiveString());
+			stringBuffer.append(' ');
+			stringBuffer.append(getNameAttr().getDescriptiveString());
 		}
-		sb.append(getSortAttr().getDescriptiveString());
-		return sb.toString();
+		stringBuffer.append(getSortAttr().getDescriptiveString());
+		return stringBuffer.toString();
 	}
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -111,8 +119,9 @@ public final class InnerClassAttributes
 // --------------------- Interface AttributeGroup ---------------------
 
 	@Override
-	public final /*InnerClassAttributes*/AttributeGroup deepCopy() {
-		final InnerClassAttributes result = new InnerClassAttributes();
+	public /*InnerClassAttributes*/AttributeGroup deepCopy() {
+		InnerClassAttributes result = new InnerClassAttributes();
+
 		deepCopyCommonItems(result);
 		result.abAttr = (AbstractAttribute) abAttr.deepCopy();
 		result.enumAttr = (EnumAttribute) enumAttr.deepCopy();
@@ -120,8 +129,9 @@ public final class InnerClassAttributes
 	}
 
 	@Override
-	public final void writeExternal(final Element parent) {
-		final Element me = new Element("InnerClass");
+	public void writeExternal(final Element parent) {
+		Element me = new Element("InnerClass");
+
 		writeExternalCommonAttributes(me);
 		abAttr.appendAttributes(me);
 		enumAttr.appendAttributes(me);
@@ -131,7 +141,7 @@ public final class InnerClassAttributes
 // --------------------- Interface IRule ---------------------
 
 	@Override
-	public final boolean isMatch(RangeEntry entry) {
+	public boolean isMatch(RangeEntry entry) {
 //        return entry.getEnd() instanceof PsiClass   &&
 		// entry.getEnd() should be the LBrace of a class.
 		return entry.getEnd().getParent() instanceof PsiClass &&
@@ -147,10 +157,13 @@ public final class InnerClassAttributes
 // -------------------------- OTHER METHODS --------------------------
 
 	public JPanel getInnerClassAttributes() {
-		final JPanel caPanel = new JPanel(new GridBagLayout());
-		final Border border = BorderFactory.createEtchedBorder();
-		caPanel.setBorder(border);
-		final GridBagConstraints constraints = new GridBagConstraints();
+		JPanel result = new JPanel(new GridBagLayout());
+		Border border = BorderFactory.createEtchedBorder();
+
+		result.setBorder(border);
+
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -159,24 +172,24 @@ public final class InnerClassAttributes
 		constraints.weighty = 0.0d;
 		constraints.gridx = constraints.gridy = 0;
 		constraints.insets = new Insets(0, 0, 5, 0);
-		caPanel.add(getPlAttr().getProtectionLevelPanel(), constraints);
+		result.add(getPlAttr().getProtectionLevelPanel(), constraints);
 		constraints.gridy = 1;
 		constraints.gridheight = 1;
-		caPanel.add(getStAttr().getAndNotPanel(), constraints);
+		result.add(getStAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getAbAttr().getAndNotPanel(), constraints);
+		result.add(getAbAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getfAttr().getAndNotPanel(), constraints);
+		result.add(getfAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getEnumAttr().getAndNotPanel(), constraints);
+		result.add(getEnumAttr().getAndNotPanel(), constraints);
 		constraints.gridy++;
-		caPanel.add(getNameAttr().getStringPanel(), constraints);
+		result.add(getNameAttr().getStringPanel(), constraints);
 		constraints.gridy++;
 		constraints.gridheight = GridBagConstraints.REMAINDER;
 		constraints.weighty = 1.0d;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		caPanel.add(getSortAttr().getSortOptionsPanel(), constraints);
-		return caPanel;
+		result.add(getSortAttr().getSortOptionsPanel(), constraints);
+		return result;
 	}
 
 }

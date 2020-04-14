@@ -88,13 +88,13 @@ public class Spacer {
 
 		int size = 0;
 
-		size += settings.getAfterClassLBrace().getnBlankLines() + 1;
-		size += settings.getBeforeMethodLBrace().getnBlankLines() + 1;
-		size += settings.getAfterMethodLBrace().getnBlankLines() + 1;
-		size += settings.getBeforeMethodRBrace().getnBlankLines() + 1;
-		size += settings.getAfterMethodRBrace().getnBlankLines() + 1;
-		size += settings.getBeforeClassRBrace().getnBlankLines() + 1;
-		size += settings.getAfterClassRBrace().getnBlankLines() + 1;
+		size += settings.getAfterClassLBrace().getBlankLineCount() + 1;
+		size += settings.getBeforeMethodLBrace().getBlankLineCount() + 1;
+		size += settings.getAfterMethodLBrace().getBlankLineCount() + 1;
+		size += settings.getBeforeMethodRBrace().getBlankLineCount() + 1;
+		size += settings.getAfterMethodRBrace().getBlankLineCount() + 1;
+		size += settings.getBeforeClassRBrace().getBlankLineCount() + 1;
+		size += settings.getAfterClassRBrace().getBlankLineCount() + 1;
 		logger.debug("constructor allocating " + size + " newline chars for max insertion");
 		newlineChars = new char[size];
 		while (size > 0) {
@@ -135,7 +135,7 @@ public class Spacer {
 					while (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
 						sb.setLength(sb.length() - 1);
 					}
-					for (int count = 0; count < settings.getNewlinesAtEOF().getnBlankLines(); count++) {
+					for (int count = 0; count < settings.getNewlinesAtEOF().getBlankLineCount(); count++) {
 						sb.append('\n');
 					}
 				}
@@ -428,7 +428,7 @@ public class Spacer {
 	private int adjustSpacing(PsiElement brace, PsiElement matchingBrace, ForceBlankLineSetting fbls, int bias)
 			throws BadPsiElement {
 		if (fbls.isForce()) {
-			return adjustSpacing(brace, matchingBrace, fbls.isBefore(), fbls.getnBlankLines(), bias);
+			return adjustSpacing(brace, matchingBrace, fbls.isBefore(), fbls.getBlankLineCount(), bias);
 		} else {
 			return 0;
 		}

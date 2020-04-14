@@ -91,16 +91,13 @@ public class ClassAttributes extends CommonAttributes {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof ClassAttributes)) {
-			return false;
-		}
+	public boolean equals(Object value) {
+		ClassAttributes other;
 
-		ClassAttributes ca = (ClassAttributes) obj;
-
-		return super.equals(ca) &&
-				abAttr.equals(ca.abAttr) &&
-				enumAttr.equals(ca.enumAttr);
+		return value instanceof ClassAttributes &&
+				super.equals(other = (ClassAttributes) value) &&
+				abAttr.equals(other.abAttr) &&
+				enumAttr.equals(other.enumAttr);
 	}
 
 	public final String toString() {

@@ -28,10 +28,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -58,83 +54,84 @@ class SpacingPane {
 // -------------------------- OTHER METHODS --------------------------
 
 	public JPanel getPane() {
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel result = new JPanel(new GridBagLayout());
 		Border border = BorderFactory.createEtchedBorder();
 
-		panel.setBorder(border);
+		result.setBorder(border);
 
 		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
 
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.weightx = 1.0d;
 		constraints.insets = new Insets(3, 3, 0, 0);
-		panel.add(getForceBlankLinePanel(settings.getAfterClassLBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getAfterClassLBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getBeforeClassRBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getBeforeClassRBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getAfterClassRBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getAfterClassRBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getBeforeMethodLBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getBeforeMethodLBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getAfterMethodLBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getAfterMethodLBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getBeforeMethodRBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getBeforeMethodRBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getAfterMethodRBrace()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getAfterMethodRBrace()), constraints.weightedLastCol());
 		constraints.newRow();
-		panel.add(getForceBlankLinePanel(settings.getNewlinesAtEOF()), constraints.weightedLastCol());
+		result.add(getForceBlankLinePanel(settings.getNewlinesAtEOF()), constraints.weightedLastCol());
 		constraints.weightedLastRow();
-		final JCheckBox insideBlockBox = new JCheckBox("Remove initial and final blank lines inside code block");
+
+		JCheckBox insideBlockBox = new JCheckBox("Remove initial and final blank lines inside code block");
+
 		insideBlockBox.setSelected(settings.isRemoveBlanksInsideCodeBlocks());
-		panel.add(insideBlockBox, constraints.weightedLastCol());
-		insideBlockBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				settings.setRemoveBlanksInsideCodeBlocks(insideBlockBox.isSelected());
-			}
-
-		});
-		return panel;
+		result.add(insideBlockBox, constraints.weightedLastCol());
+		insideBlockBox.addActionListener(event -> settings.setRemoveBlanksInsideCodeBlocks(insideBlockBox.isSelected()));
+		return result;
 	}
 
-	private JPanel getForceBlankLinePanel(final ForceBlankLineSetting fbl) {
-		final JPanel panel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints();
+	private static JPanel getForceBlankLinePanel(ForceBlankLineSetting forceBlankLineSetting) {
+		JPanel result = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints();
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.lastRow();
 
-		final JCheckBox forceBox = new JCheckBox("Force");
-		forceBox.setSelected(fbl.isForce());
-		panel.add(forceBox, constraints.weightedFirstCol());
-		final NumberFormat integerInstance = NumberFormat.getIntegerInstance();
+		JCheckBox forceBox = new JCheckBox("Force");
+
+		forceBox.setSelected(forceBlankLineSetting.isForce());
+		result.add(forceBox, constraints.weightedFirstCol());
+
+		NumberFormat integerInstance = NumberFormat.getIntegerInstance();
+
 		integerInstance.setMaximumIntegerDigits(2);
 		integerInstance.setMinimumIntegerDigits(1);
-		final JFormattedTextField nBlankLines = new JFormattedTextField(integerInstance);
-		nBlankLines.setValue(new Integer("88"));
-		Dimension d = nBlankLines.getPreferredSize();
-		d.width += 3;
-		nBlankLines.setPreferredSize(d);
-		nBlankLines.setValue(fbl.getnBlankLines());
-		nBlankLines.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+
+		JFormattedTextField blankLineCount = new JFormattedTextField(integerInstance);
+
+		blankLineCount.setValue(Integer.valueOf("88"));
+
+		Dimension preferredSize = blankLineCount.getPreferredSize();
+
+		preferredSize.width += 3;
+
+		blankLineCount.setPreferredSize(preferredSize);
+		blankLineCount.setValue(forceBlankLineSetting.getBlankLineCount());
+		blankLineCount.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		constraints.insets = new Insets(0, 3, 0, 0);
-		panel.add(nBlankLines, constraints.weightedNextCol());
-		nBlankLines.addPropertyChangeListener("value", new PropertyChangeListener() {
+		result.add(blankLineCount, constraints.weightedNextCol());
+		blankLineCount.addPropertyChangeListener("value", event -> {
+			int n = ((Number) blankLineCount.getValue()).intValue();
 
-			@Override
-			public void propertyChange(final PropertyChangeEvent evt) {
-				int n = ((Number) nBlankLines.getValue()).intValue();
-				if (n < 0) {
-					n = 0;
-					nBlankLines.setValue(n);
-				}
-				fbl.setnBlankLines(n);
+			if (n < 0) {
+				n = 0;
+				blankLineCount.setValue(n);
 			}
-
+			forceBlankLineSetting.setBlankLineCount(n);
 		});
-		String labelText = "blank lines " +
-				(fbl.isBefore() ? "before" : "after");
-		switch (fbl.getObject()) {
+
+		String labelText = "blank lines " + (forceBlankLineSetting.isBefore() ? "before" : "after");
+
+		switch (forceBlankLineSetting.getObject()) {
 			case ForceBlankLineSetting.CLASS_OBJECT:
 				labelText += " class ";
 				break;
@@ -142,26 +139,23 @@ class SpacingPane {
 				labelText += " method ";
 				break;
 		}
-		labelText += fbl.isOpenBrace() ? "open brace \"{\""
+		labelText += forceBlankLineSetting.isOpenBrace() ? "open brace \"{\""
 				: "close brace \"}\"";
-		if (fbl.getObject() == ForceBlankLineSetting.EOF_OBJECT) {
+		if (forceBlankLineSetting.getObject() == ForceBlankLineSetting.EOF_OBJECT) {
 			labelText = "newline characters at end of file";
 		}
-		final JLabel blankLineLabel = new JLabel(labelText);
-		panel.add(blankLineLabel, constraints.lastCol());
-		nBlankLines.setEnabled(forceBox.isSelected());
+
+		JLabel blankLineLabel = new JLabel(labelText);
+
+		result.add(blankLineLabel, constraints.lastCol());
+		blankLineCount.setEnabled(forceBox.isSelected());
 		blankLineLabel.setEnabled(forceBox.isSelected());
-		forceBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fbl.setForce(forceBox.isSelected());
-				nBlankLines.setEnabled(forceBox.isSelected());
-				blankLineLabel.setEnabled(forceBox.isSelected());
-			}
-
+		forceBox.addActionListener(event -> {
+			forceBlankLineSetting.setForce(forceBox.isSelected());
+			blankLineCount.setEnabled(forceBox.isSelected());
+			blankLineLabel.setEnabled(forceBox.isSelected());
 		});
-		return panel;
+		return result;
 	}
 
 }

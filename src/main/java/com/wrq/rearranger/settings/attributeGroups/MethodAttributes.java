@@ -172,11 +172,10 @@ public class MethodAttributes
 		abstractAttr = value;
 	}
 
-	public final JPanel getExcludePanel() {
-		final JPanel excludePanel = new JPanel(new GridBagLayout());
-//        final Border border = BorderFactory.createEtchedBorder();
-//        excludePanel.setBorder(border);
-		final GridBagConstraints constraints = new GridBagConstraints();
+	private JPanel getExcludePanel() {
+		JPanel excludePanel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.weightx = 1.0d;
@@ -184,15 +183,12 @@ public class MethodAttributes
 		constraints.gridx = constraints.gridy = 0;
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.gridheight = GridBagConstraints.REMAINDER;
-		final JCheckBox excludeBox = new JCheckBox("Exclude from extracted method processing");
+
+		JCheckBox excludeBox = new JCheckBox("Exclude from extracted method processing");
+
 		excludeBox.setSelected(noExtractedMethods);
-		excludeBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				noExtractedMethods = excludeBox.isSelected();
-			}
-
+		excludeBox.addActionListener(event -> {
+			noExtractedMethods = excludeBox.isSelected();
 		});
 		excludePanel.add(excludeBox, constraints);
 		return excludePanel;
@@ -239,7 +235,7 @@ public class MethodAttributes
 		minParamsAttr = value;
 	}
 
-	private NativeAttribute getNativeAttr() {
+	public NativeAttribute getNativeAttr() {
 		return nativeAttr;
 	}
 
@@ -247,7 +243,7 @@ public class MethodAttributes
 		nativeAttr = value;
 	}
 
-	private OverriddenAttribute getOverriddenAttr() {
+	public OverriddenAttribute getOverriddenAttr() {
 		return overriddenAttr;
 	}
 
@@ -255,7 +251,7 @@ public class MethodAttributes
 		overriddenAttr = value;
 	}
 
-	private OverridingAttribute getOverridingAttr() {
+	public OverridingAttribute getOverridingAttr() {
 		return overridingAttr;
 	}
 
@@ -279,7 +275,7 @@ public class MethodAttributes
 		staticInitAttr = value;
 	}
 
-	private SynchronizedAttribute getSyncAttr() {
+	public SynchronizedAttribute getSyncAttr() {
 		return syncAttr;
 	}
 
@@ -295,23 +291,23 @@ public class MethodAttributes
 		this.canonicalMethodType = canonicalMethodType;
 	}
 
-	private boolean isConstructorMethodType() {
+	public boolean isConstructorMethodType() {
 		return constructorMethodType;
 	}
 
-	public final void setConstructorMethodType(final boolean constructorMethodType) {
+	public void setConstructorMethodType(boolean constructorMethodType) {
 		this.constructorMethodType = constructorMethodType;
 	}
 
-	private boolean isGetterSetterMethodType() {
+	public boolean isGetterSetterMethodType() {
 		return getterSetterMethodType;
 	}
 
-	public final void setGetterSetterMethodType(final boolean getterSetterMethodType) {
+	public void setGetterSetterMethodType(final boolean getterSetterMethodType) {
 		this.getterSetterMethodType = getterSetterMethodType;
 	}
 
-	private boolean isInvertMethodType() {
+	public boolean isInvertMethodType() {
 		return invertMethodType;
 	}
 
@@ -329,40 +325,39 @@ public class MethodAttributes
 		this.noExtractedMethods = noExtractedMethods;
 	}
 
-	private boolean isOtherMethodType() {
+	public boolean isOtherMethodType() {
 		return otherMethodType;
 	}
 
-	public final void setOtherMethodType(final boolean otherMethodType) {
+	public void setOtherMethodType(final boolean otherMethodType) {
 		this.otherMethodType = otherMethodType;
 	}
 
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object object) {
-		if (!(object instanceof MethodAttributes)) {
-			return false;
-		}
-		final MethodAttributes ma = (MethodAttributes) object;
-		return super.equals(object) &&
-				abstractAttr.equals(ma.abstractAttr) &&
-				overriddenAttr.equals(ma.overriddenAttr) &&
-				overridingAttr.equals(ma.overridingAttr) &&
-				implementedAttr.equals(ma.implementedAttr) &&
-				implementingAttr.equals(ma.implementingAttr) &&
-				staticInitAttr.equals(ma.staticInitAttr) &&
-				nativeAttr.equals(ma.nativeAttr) &&
-				syncAttr.equals(ma.syncAttr) &&
-				returnTypeAttr.equals(ma.returnTypeAttr) &&
-				minParamsAttr.equals(ma.minParamsAttr) &&
-				maxParamsAttr.equals(ma.maxParamsAttr) &&
-				isConstructorMethodType() == ma.isConstructorMethodType() &&
-				isGetterSetterMethodType() == ma.isGetterSetterMethodType() &&
-				isCanonicalMethodType() == ma.isCanonicalMethodType() &&
-				isOtherMethodType() == ma.isOtherMethodType() &&
-				invertMethodType == ma.invertMethodType &&
-				noExtractedMethods == ma.noExtractedMethods &&
-				getterSetterDefinition.equals(ma.getterSetterDefinition);
+	public boolean equals(Object value) {
+		MethodAttributes other;
+
+		return value instanceof MethodAttributes &&
+				super.equals(value) &&
+				abstractAttr.equals((other = (MethodAttributes) value).abstractAttr) &&
+				overriddenAttr.equals(other.overriddenAttr) &&
+				overridingAttr.equals(other.overridingAttr) &&
+				implementedAttr.equals(other.implementedAttr) &&
+				implementingAttr.equals(other.implementingAttr) &&
+				staticInitAttr.equals(other.staticInitAttr) &&
+				nativeAttr.equals(other.nativeAttr) &&
+				syncAttr.equals(other.syncAttr) &&
+				returnTypeAttr.equals(other.returnTypeAttr) &&
+				minParamsAttr.equals(other.minParamsAttr) &&
+				maxParamsAttr.equals(other.maxParamsAttr) &&
+				isConstructorMethodType() == other.isConstructorMethodType() &&
+				isGetterSetterMethodType() == other.isGetterSetterMethodType() &&
+				isCanonicalMethodType() == other.isCanonicalMethodType() &&
+				isOtherMethodType() == other.isOtherMethodType() &&
+				invertMethodType == other.invertMethodType &&
+				noExtractedMethods == other.noExtractedMethods &&
+				getterSetterDefinition.equals(other.getterSetterDefinition);
 	}
 
 	public final String toString() {

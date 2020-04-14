@@ -128,18 +128,16 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 // -------------------------- STATIC METHODS --------------------------
 
 	public static RearrangerSettings getDefaultSettings() {
-		logger.debug("enter loadDefaultSettings");
-
 		URL settingsURL = RearrangerSettingsImplementation.class.getClassLoader().getResource(
 				"com/wrq/rearranger/defaultConfiguration.xml"
 		);
 
-		logger.debug("settings URL=" + settingsURL.getFile());
+		assert settingsURL != null;
+
 		try (InputStream inputStream = settingsURL.openStream()) {
 			return getSettingsFromStream(inputStream);
 		} catch (IOException exception) {
-			logger.debug("getDefaultSettings:" + exception);
-			return null;
+			throw new IllegalStateException(exception);
 		}
 	}
 
@@ -180,10 +178,10 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 			Element rearranger = component.getChild(RearrangerImplementation.COMPONENT_NAME);
 
 			if (rearranger != null) {
-				RearrangerSettingsImplementation rs = new RearrangerSettingsImplementation();
+				RearrangerSettings result = new RearrangerSettingsImplementation();
 
-				rs.readExternal(rearranger);
-				return rs;
+				result.readExternal(rearranger);
+				return result;
 			}
 		}
 		return null;
@@ -752,7 +750,15 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 
 		return value instanceof RearrangerSettings &&
 				getClassOrderAttributeList().equals((other = (RearrangerSettings) value).getClassOrderAttributeList()) &&
-				getItemOrderAttributeList().equals(other.getItemOrderAttributeList()) &&
+				getAfterClassLBrace().equals(other.getAfterClassLBrace()) && //false
+				getAfterClassRBrace().equals(other.getAfterClassRBrace()) &&
+				getBeforeClassRBrace().equals(other.getBeforeClassRBrace()) && //false
+				getBeforeMethodLBrace().equals(other.getBeforeMethodLBrace()) && //false
+				getAfterMethodLBrace().equals(other.getAfterMethodLBrace()) && //false
+				getAfterMethodRBrace().equals(other.getAfterMethodRBrace()) && //false
+				getBeforeMethodRBrace().equals(other.getBeforeMethodRBrace()) && //false
+				getNewlinesAtEOF().equals(other.getNewlinesAtEOF()) && //false
+				getItemOrderAttributeList().equals(other.getItemOrderAttributeList()) && //false
 				getExtractedMethodsSettings().equals(other.getExtractedMethodsSettings()) &&
 				isKeepGettersSettersTogether() == other.isKeepGettersSettersTogether() &&
 				isKeepGettersSettersWithProperty() == other.isKeepGettersSettersWithProperty() &&
@@ -770,14 +776,6 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 				isShowComments() == other.isShowComments() &&
 				isShowParameterNames() == other.isShowParameterNames() &&
 				isRemoveBlanksInsideCodeBlocks() == other.isRemoveBlanksInsideCodeBlocks() &&
-				getAfterClassLBrace().equals(other.getAfterClassLBrace()) &&
-				getAfterClassRBrace().equals(other.getAfterClassRBrace()) &&
-				getBeforeClassRBrace().equals(other.getBeforeClassRBrace()) &&
-				getBeforeMethodLBrace().equals(other.getBeforeMethodLBrace()) &&
-				getAfterMethodLBrace().equals(other.getAfterMethodLBrace()) &&
-				getAfterMethodRBrace().equals(other.getAfterMethodRBrace()) &&
-				getBeforeMethodRBrace().equals(other.getBeforeMethodRBrace()) &&
-				getNewlinesAtEOF().equals(other.getNewlinesAtEOF()) &&
 				getDefaultGSDefinition().equals(other.getDefaultGSDefinition());
 	}
 

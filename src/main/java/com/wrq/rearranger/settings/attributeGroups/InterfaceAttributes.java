@@ -56,8 +56,7 @@ import org.jdom.Element;
 /**
  * Rule and attributes to support grouping of methods that implement interface methods.
  */
-public class InterfaceAttributes
-		implements AttributeGroup, IRestrictMethodExtraction, IPrioritizableRule {
+public class InterfaceAttributes implements AttributeGroup, IRestrictMethodExtraction, IPrioritizableRule {
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -67,13 +66,13 @@ public class InterfaceAttributes
 
 	public static final int METHOD_ORDER_ENCOUNTERED = 2;
 
-	NameAttribute nameAttr;
+	private NameAttribute nameAttr;
 
-	boolean alphabetizeInterfaces;
+	private boolean alphabetizeInterfaces;
 
-	CommentRule precedingComment;
+	private CommentRule precedingComment;
 
-	CommentRule trailingComment;
+	private CommentRule trailingComment;
 
 	private boolean noExtractedMethods;
 
@@ -86,7 +85,8 @@ public class InterfaceAttributes
 // -------------------------- STATIC METHODS --------------------------
 
 	public static /*InterfaceAttributes*/AttributeGroup readExternal(final Element item) {
-		final InterfaceAttributes result = new InterfaceAttributes();
+		InterfaceAttributes result = new InterfaceAttributes();
+
 		result.loadAttributes(item);
 		return result;
 	}
@@ -129,12 +129,17 @@ public class InterfaceAttributes
 		return commentFillString;
 	}
 
+	public void setCommentFillString(CommentFillString value) {
+		commentFillString = value;
+	}
+
 	private JPanel getCommentPanel() {
 		JPanel commentPanel = new JPanel(new GridBagLayout());
 		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
-		Border b = BorderFactory.createEtchedBorder();
-		TitledBorder t = BorderFactory.createTitledBorder(b, "Comments");
-		commentPanel.setBorder(t);
+		Border etchedBorder = BorderFactory.createEtchedBorder();
+		TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, "Comments");
+
+		commentPanel.setBorder(titledBorder);
 		constraints.fill = GridBagConstraints.BOTH;
 
 		JLabel legendLabel = new JLabel("Comment Substitutions: use %IF% for interface name");
@@ -144,6 +149,7 @@ public class InterfaceAttributes
 		JPanel trailingCommentPanel = getCommentAreaPanel(getTrailingComment());
 		JPanel legendPanel = new JPanel(new GridBagLayout());
 		Border border = BorderFactory.createEtchedBorder();
+
 		legendPanel.setBorder(border);
 		constraints.insets = new Insets(5, 5, 5, 5);
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -167,58 +173,43 @@ public class InterfaceAttributes
 		return commentPanel;
 	}
 
-	private JPanel getCommentAreaPanel(final CommentRule comment) {
-		JPanel commentPanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+	private static JPanel getCommentAreaPanel(CommentRule comment) {
+		JPanel result = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightedLastRow();
-		final JTextArea commentArea = new JTextArea(4, 40);
+
+		JTextArea commentArea = new JTextArea(4, 40);
+
 		commentArea.setText(comment.getCommentText());
-		final JScrollPane scrollPane = new JScrollPane(commentArea);
+
+		JScrollPane scrollPane = new JScrollPane(commentArea);
+
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		commentPanel.add(scrollPane, constraints.weightedLastCol());
+		result.add(scrollPane, constraints.weightedLastCol());
 		commentArea.getDocument().addDocumentListener(
 				new DocumentListener() {
 
 					@Override
-					public void changedUpdate(final DocumentEvent e) {
+					public void changedUpdate(final DocumentEvent event) {
 						comment.setCommentText(commentArea.getText());
 					}
 
 					@Override
-					public void insertUpdate(final DocumentEvent e) {
+					public void insertUpdate(final DocumentEvent event) {
 						comment.setCommentText(commentArea.getText());
 					}
 
 					@Override
-					public void removeUpdate(final DocumentEvent e) {
+					public void removeUpdate(final DocumentEvent event) {
 						comment.setCommentText(commentArea.getText());
 					}
 
 				}
 		);
-		return commentPanel;
-	}
-
-	public final JPanel getExcludePanel() {
-		final JPanel excludePanel = new JPanel(new GridBagLayout());
-		final Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
-		constraints.lastRow();
-		final JCheckBox excludeBox = new JCheckBox("Exclude from extracted method processing");
-		excludeBox.setSelected(noExtractedMethods);
-		excludeBox.addActionListener(
-				new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						noExtractedMethods = excludeBox.isSelected();
-					}
-
-				}
-		);
-		excludePanel.add(excludeBox, constraints.weightedLastCol());
-		return excludePanel;
+		return result;
 	}
 
 	public int getMethodOrder() {
@@ -231,6 +222,10 @@ public class InterfaceAttributes
 
 	public NameAttribute getNameAttr() {
 		return nameAttr;
+	}
+
+	public void setNameAttr(NameAttribute value) {
+		nameAttr = value;
 	}
 
 	public CommentRule getPrecedingComment() {
@@ -259,6 +254,14 @@ public class InterfaceAttributes
 		this.trailingComment = trailingComment;
 	}
 
+	public boolean isAlphabetizeInterfaces() {
+		return alphabetizeInterfaces;
+	}
+
+	public void setAlphabetizeInterfaces(boolean alphabetizeInterfaces) {
+		this.alphabetizeInterfaces = alphabetizeInterfaces;
+	}
+
 	@Override
 	public boolean isNoExtractedMethods() {
 		return noExtractedMethods;
@@ -269,24 +272,19 @@ public class InterfaceAttributes
 		this.noExtractedMethods = noExtractedMethods;
 	}
 
-	public void setAlphabetizeInterfaces(boolean alphabetizeInterfaces) {
-		this.alphabetizeInterfaces = alphabetizeInterfaces;
-	}
-
 // ------------------------ CANONICAL METHODS ------------------------
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof InterfaceAttributes)) {
-			return false;
-		}
-		final InterfaceAttributes ia = (InterfaceAttributes) obj;
-		return nameAttr.equals(ia.getNameAttr()) &&
-				alphabetizeInterfaces == ia.alphabetizeInterfaces &&
-				methodOrder == ia.methodOrder &&
-				noExtractedMethods == ia.noExtractedMethods &&
-				precedingComment.equals(ia.precedingComment) &&
-				trailingComment.equals(ia.trailingComment) &&
-				commentFillString.equals(ia.commentFillString);
+	public boolean equals(Object value) {
+		InterfaceAttributes other;
+
+		return value instanceof InterfaceAttributes &&
+				nameAttr.equals((other = (InterfaceAttributes) value).getNameAttr()) &&
+				alphabetizeInterfaces == other.alphabetizeInterfaces &&
+				methodOrder == other.methodOrder &&
+				noExtractedMethods == other.noExtractedMethods &&
+				precedingComment.equals(other.precedingComment) &&
+				trailingComment.equals(other.trailingComment) &&
+				commentFillString.equals(other.commentFillString);
 	}
 
 	public final String toString() {
@@ -491,6 +489,19 @@ public class InterfaceAttributes
 
 	public boolean isAlphabetize() {
 		return alphabetizeInterfaces;
+	}
+
+	private JPanel getExcludePanel() {
+		JPanel result = new JPanel(new GridBagLayout());
+		Constraints constraints = new Constraints(GridBagConstraints.NORTHWEST);
+
+		constraints.lastRow();
+		JCheckBox excludeBox = new JCheckBox("Exclude from extracted method processing");
+
+		excludeBox.setSelected(noExtractedMethods);
+		excludeBox.addActionListener(event -> noExtractedMethods = excludeBox.isSelected());
+		result.add(excludeBox, constraints.weightedLastCol());
+		return result;
 	}
 
 	private JPanel getMethodOrderPanel() {

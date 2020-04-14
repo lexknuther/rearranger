@@ -2,9 +2,6 @@
 	<id>com.wrq.rearranger</id>
 	<name>Rearranger</name>
 	<version>6.0.0</version>
-	<change-notes>
-1) Version 6.0.0: refactored plugin with support for IntelliJ >= 2020.1.
-	</change-notes>
 	<vendor email="dave.kriewall at gmail.com" url="">Dave Kriewall</vendor>
 	<description><![CDATA[Rearranges (reorders) class and class member declarations according to a user-specified order and/or method call hierarchy;
 generates section-marking comments;

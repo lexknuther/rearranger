@@ -360,7 +360,7 @@
 		<AfterClassLBrace Force="true" nBlankLines="1"/>
 		<AfterClassRBrace Force="true" nBlankLines="1"/>
 		<BeforeClassRBrace Force="true" nBlankLines="1"/>
-		<BeforeMethodLBrace Force="true" nBlankLines="1"/>
+		<BeforeMethodLBrace Force="false" nBlankLines="1"/>
 		<AfterMethodLBrace Force="true" nBlankLines="0"/>
 		<AfterMethodRBrace Force="true" nBlankLines="1"/>
 		<BeforeMethodRBrace Force="true" nBlankLines="0"/>

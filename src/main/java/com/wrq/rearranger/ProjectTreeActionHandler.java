@@ -188,7 +188,7 @@ public class ProjectTreeActionHandler extends AnAction {
 
 						application.runWriteAction(
 								() -> {
-									Rearranger rearranger = application.getComponent(Rearranger.class);
+									Rearranger rearranger = application.getService(Rearranger.class);
 									RearrangerSettings settings = rearranger.getState();
 
 									settings = settings.deepCopy();

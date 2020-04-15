@@ -21,7 +21,7 @@
   -->
 <component name="Rearranger">
 	<Rearranger KeepGettersSettersTogether="true" KeepGettersSettersWithProperty="false"
-				KeepOverloadedMethodsTogether="true" ConfirmBeforeRearranging="false" RearrangeInnerClasses="false"
+				KeepOverloadedMethodsTogether="true" ConfirmBeforeRearranging="false" RearrangeInnerClasses="true"
 				globalCommentPattern="" overloadedOrder="1" ShowParameterTypes="true" ShowParameterNames="false"
 				ShowFields="true" ShowTypeAfterMethod="true" ShowRules="true" ShowMatchedRules="false"
 				ShowComments="false" RemoveBlanksInsideCodeBlocks="true">

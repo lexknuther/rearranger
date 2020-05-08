@@ -21,5 +21,8 @@ intellij {
 }
 
 patchPluginXml {
-	changeNotes """Version 6.0.0: refactored plugin with support for IntelliJ >= 2020.1."""
+	changeNotes """
+Version 6.0.1: eliminated deprecated API usage.
+Version 6.0.0: refactored plugin with support for IntelliJ >= 2020.1.
+"""
 }

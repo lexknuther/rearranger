@@ -2,7 +2,7 @@
 	<id>com.wrq.rearranger</id>
 	<name>Rearranger</name>
 	<version>6.0.0</version>
-	<vendor email="dave.kriewall at gmail.com" url="">Dave Kriewall</vendor>
+	<vendor url="https://github.com/lexknuther/rearranger">Dave Kriewall, Brandon Enochs</vendor>
 	<description><![CDATA[Rearranges (reorders) class and class member declarations according to a user-specified order and/or method call hierarchy;
 generates section-marking comments;
 provides several controls for spacing within and between methods and classes; and

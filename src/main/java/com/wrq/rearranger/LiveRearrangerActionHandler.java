@@ -21,12 +21,12 @@
  */
 package com.wrq.rearranger;
 
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
@@ -50,6 +50,9 @@ import java.awt.Window;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Supports manual rearrangement of a file.
  */
@@ -66,17 +69,15 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 // -------------------------- OTHER METHODS --------------------------
 
 	@Override
-	public final void execute(final Editor editor, final DataContext context) {
-		if (editor == null) {
-			return;
-		}
-		final Project project = (Project) context.getData(DataConstants.PROJECT);
+	protected void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
+		Project project = dataContext.getData(CommonDataKeys.PROJECT);
+
 		logger.debug("project=" + project);
 		logger.debug("editor=" + editor);
-		final Document document = editor.getDocument();
-		final CaretModel caret = editor.getCaretModel();
+		Document document = editor.getDocument();
 		int cursorOffset = caret.getOffset();
-		final PsiFile psiFile = getFile(editor, context);
+		PsiFile psiFile = getFile(editor, dataContext);
+
 		if (!psiFile.getName().endsWith(".java")) {
 			logger.debug("not a .java file -- skipping " + psiFile.getName());
 			return;
@@ -95,14 +96,13 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 		buildLiveRearrangerData(project, document, psiFile, cursorOffset);
 	}
 
-	private static PsiFile getFile(
-			final Editor editor,
-			final DataContext context) {
-		final Project project = (Project) context.getData(DataConstants.PROJECT);
-		final Document document = editor.getDocument();
-		final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-		final VirtualFile virtualFile = fileDocumentManager.getFile(document);
-		final PsiManager psiManager = PsiManager.getInstance(project);
+	private static PsiFile getFile(Editor editor, DataContext context) {
+		Project project = context.getData(CommonDataKeys.PROJECT);
+		Document document = editor.getDocument();
+		FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+		VirtualFile virtualFile = fileDocumentManager.getFile(document);
+		PsiManager psiManager = PsiManager.getInstance(project);
+
 		return psiManager.findFile(virtualFile);
 	}
 
@@ -118,22 +118,22 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 	 * @param document
 	 * @param psiFile
 	 */
-	void buildLiveRearrangerData(
-			final Project project,
-			final Document document,
-			final PsiFile psiFile,
-			final int cursorOffset) {
+	void buildLiveRearrangerData(Project project, Document document, PsiFile psiFile, int cursorOffset) {
 		/**
 		 * Per instructions from IntelliJ, we have to commit any changes to the document to the Psi
 		 * tree.
 		 */
-		final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+		PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+
 		documentManager.commitDocument(document);
-		final RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation(); // use default settings with no rules
+
+		RearrangerSettingsImplementation settings = new RearrangerSettingsImplementation(); // use default settings with no rules
+
 		settings.setAskBeforeRearranging(true);
 		settings.setRearrangeInnerClasses(true);
 		if (useDialog) {
-			final Application application = ApplicationManager.getApplication();
+			Application application = ApplicationManager.getApplication();
+
 			application.runWriteAction(
 					new Runnable() {
 
@@ -145,7 +145,7 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 					}
 			);
 		} else {
-			final Runnable task = new Runnable() {
+			Runnable task = new Runnable() {
 
 				@Override
 				public void run() {
@@ -154,7 +154,6 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 				}
 
 			};
-
 			Thread t = new Thread(
 					new Runnable() {
 
@@ -189,27 +188,32 @@ public class LiveRearrangerActionHandler extends EditorActionHandler {
 		logger.debug("exit buildLiveRearrangerData on thread " + Thread.currentThread().getName());
 	}
 
-	public final void liveRearrangeDocument(
-			final Project project,
-			final PsiFile psiFile,
-			final RearrangerSettingsImplementation settings,
-			final Document document,
-			final int cursorOffset) {
+	public void liveRearrangeDocument(
+			Project project,
+			PsiFile psiFile,
+			RearrangerSettingsImplementation settings,
+			Document document,
+			int cursorOffset) {
 		logger.debug("enter liveRearrangeDocument on thread " + Thread.currentThread().getName());
 
 		new CommentUtil(settings); // create CommentUtil singleton
-		final Window window = WindowManager.getInstance().suggestParentWindow(project);
+
+		Window window = WindowManager.getInstance().suggestParentWindow(project);
 		ILiveRearranger fsp;
+
 		if (useDialog) {
 			fsp = new LiveRearrangerDialog(settings, psiFile, document, window, cursorOffset);
 		} else {
 			fsp = new LiveRearrangerPopup(settings, psiFile, document, project, window, cursorOffset);
 		}
-		final Parser p = new Parser(project, settings, psiFile);
-		final List<ClassContentsEntry> outerClasses = p.parseOuterLevel();
-		if (outerClasses.size() > 0) {
-			final Mover mover = new Mover(outerClasses, settings);
-			final List<IRuleInstance> resultRuleInstances = mover.rearrangeOuterClasses();
+
+		Parser parser = new Parser(project, settings, psiFile);
+		List<ClassContentsEntry> outerClasses = parser.parseOuterLevel();
+
+		if (!outerClasses.isEmpty()) {
+			Mover mover = new Mover(outerClasses, settings);
+			List<IRuleInstance> resultRuleInstances = mover.rearrangeOuterClasses();
+
 			fsp.setResultRuleInstances(resultRuleInstances);
 			fsp.liveRearranger();
 		}

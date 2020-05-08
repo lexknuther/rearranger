@@ -62,15 +62,15 @@ public class ClassEntry extends ClassContentsEntry {
 
 // ------------------------------ FIELDS ------------------------------
 
-	private Logger logger = Logger.getInstance(getClass());
+	protected List<ClassContentsEntry> contents;
 
-	protected final List<ClassContentsEntry> contents;
+	private Logger logger = Logger.getInstance(getClass());
 
 	private List<IRuleInstance> resultRuleInstances;
 
-	private final RearrangerSettings settings;
+	private RearrangerSettings settings;
 
-	private final int nestingLevel;
+	private int nestingLevel;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -92,7 +92,7 @@ public class ClassEntry extends ClassContentsEntry {
 // --------------------- GETTER / SETTER METHODS ---------------------
 
 	// End Methods of Interface IFilePopupEntry
-	public final List<ClassContentsEntry> getContents() {
+	public List<ClassContentsEntry> getContents() {
 		return contents;
 	}
 
@@ -167,12 +167,8 @@ public class ClassEntry extends ClassContentsEntry {
 		emitter.emitRuleInstances(getResultRuleInstances());
 	}
 
-	protected void parseRemainingClassContents(
-			final Project project,
-			int startingIndex,
-			final PsiElement psiClass
-	) {
-		final PsiSearchHelper psh = PsiSearchHelper.SERVICE.getInstance(project);
+	protected void parseRemainingClassContents(Project project, int startingIndex, PsiElement psiClass) {
+		PsiSearchHelper psh = PsiSearchHelper.getInstance(project);
 		int lastIndex = startingIndex;
 		/**
 		 * if option indicates, don't parse inner class contents; leave them unchanged.
@@ -276,11 +272,12 @@ public class ClassEntry extends ClassContentsEntry {
 				lastIndex = 0;
 			}
 			// create a dummy trailer entry to cover anything after the last class.
-			final MiscellaneousTextEntry miscellaneousTextEntry = new MiscellaneousTextEntry(
+			MiscellaneousTextEntry miscellaneousTextEntry = new MiscellaneousTextEntry(
 					psiClass.getChildren()[lastIndex],
 					psiClass.getChildren()[psiClass.getChildren().length - 1],
 					false, true
 			);
+
 			contents.add(miscellaneousTextEntry);
 			miscellaneousTextEntry.checkForComment();
 		}
@@ -321,6 +318,7 @@ public class ClassEntry extends ClassContentsEntry {
 		 */
 		PsiElement myChild = child;
 		boolean done = false;
+
 		while (!done) {
 			PsiElement lastElement = myChild.getLastChild();
 			logger.debug("parseField: getLastChild=" +
@@ -383,12 +381,15 @@ public class ClassEntry extends ClassContentsEntry {
 //        }                  // seems to be no different than method.findSuperMethods()
 
 		attributes.modifiers |= isCanonicalOrInterface(attributes.method, attributes);
-		final SearchScope ss = psh.getUseScope(child);
-		final Query<PsiMethod> query = OverridingMethodsSearch.search(attributes.method, ss, true);
-		final PsiMethod method = query.findFirst();
+
+		SearchScope ss = psh.getUseScope(child);
+		Query<PsiMethod> query = OverridingMethodsSearch.search(attributes.method, ss, true);
+		PsiMethod method = query.findFirst();
+
 		if (method != null) {
-			final Collection<PsiMethod> overridersCollection = query.findAll();
-			final PsiMethod[] overriders = overridersCollection.toArray(new PsiMethod[overridersCollection.size()]);
+			Collection<PsiMethod> overridersCollection = query.findAll();
+			PsiMethod[] overriders = overridersCollection.toArray(new PsiMethod[overridersCollection.size()]);
+
 			logger.debug(
 					"method " +
 							attributes.method.toString() +
@@ -403,7 +404,8 @@ public class ClassEntry extends ClassContentsEntry {
 			}
 		}
 		// determine if this method overrides another.
-		final PsiMethod[] superMethods = attributes.method.findSuperMethods(false);
+		PsiMethod[] superMethods = attributes.method.findSuperMethods(false);
+
 		logger.debug("method " + attributes.method.toString() + " has " + superMethods.length + " supermethods");
 		dumpMethodNames(superMethods);
 		if (superMethods.length > 0) {
@@ -449,12 +451,15 @@ public class ClassEntry extends ClassContentsEntry {
 							parent
 			);
 			if (parent instanceof PsiClass) {
-				final PsiClass psiClass = (PsiClass) parent;
+				PsiClass psiClass = (PsiClass) parent;
+
 				if (psiClass.isInterface()) {
 					logger.debug("method " + method.toString() + " implements interface");
 					attributes.interfaceName = psiClass.getName();
 				}
+
 				PsiElement superclass = psiClass.getSuperClass();
+
 				if (superclass == null) {
 					// m's class must be java.lang.Object; it's the only class with a null
 					// superclass.

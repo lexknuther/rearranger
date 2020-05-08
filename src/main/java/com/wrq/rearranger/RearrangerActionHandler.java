@@ -22,7 +22,6 @@
 package com.wrq.rearranger;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -83,7 +82,7 @@ public class RearrangerActionHandler extends EditorActionHandler {
 
 	@Override
 	protected void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
-		Project project = (Project) dataContext.getData(DataConstants.PROJECT);
+		Project project = dataContext.getData(CommonDataKeys.PROJECT);
 		Document document = editor.getDocument();
 		PsiFile psiFile = getFile(editor, dataContext);
 

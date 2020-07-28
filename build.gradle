@@ -22,6 +22,7 @@ intellij {
 
 patchPluginXml {
 	changeNotes """
+Version 6.0.3: added support for IntelliJ 2020.2<br/>
 Version 6.0.2: updated author information.<br/>
 Version 6.0.1: eliminated deprecated API usage.<br/>
 Version 6.0.0: refactored plugin with support for IntelliJ >= 2020.1.

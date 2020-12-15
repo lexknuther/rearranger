@@ -14,14 +14,14 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-// See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-	version '2020.2'
+	version '2020.3'
 	plugins 'java'
 }
 
 patchPluginXml {
 	changeNotes """
+Version 6.0.4: added support for IntelliJ 2020.3<br/>
 Version 6.0.3: added support for IntelliJ 2020.2<br/>
 Version 6.0.2: updated author information.<br/>
 Version 6.0.1: eliminated deprecated API usage.<br/>

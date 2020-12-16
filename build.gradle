@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mil.navy.nrl.itd.rearranger'
-version '6.0.4'
+version '6.0.5'
 
 repositories {
 	mavenCentral()
@@ -21,6 +21,7 @@ intellij {
 
 patchPluginXml {
 	changeNotes """
+Version 6.0.5: fixed a bug in plugin.xml that prevented the plugin from running on 2020.3<br/>
 Version 6.0.4: added support for IntelliJ 2020.3<br/>
 Version 6.0.3: added support for IntelliJ 2020.2<br/>
 Version 6.0.2: updated author information.<br/>

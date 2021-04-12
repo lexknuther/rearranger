@@ -15,15 +15,16 @@ dependencies {
 }
 
 intellij {
-	version '2020.3'
+	version '2021.1'
 	plugins 'java'
 }
 
 patchPluginXml {
 	sinceBuild "201"
-	untilBuild "203"
+	untilBuild "212"
 	changeNotes """
-Version 6.0.5: switched to using platPluginXml to control since-build and until-build<br/>
+Version 6.0.6: added support for IntelliJ 2020.1<br/>
+Version 6.0.5: switched to using patchPluginXml to control since-build and until-build<br/>
 Version 6.0.4: added support for IntelliJ 2020.3<br/>
 Version 6.0.3: added support for IntelliJ 2020.2<br/>
 Version 6.0.2: updated author information.<br/>

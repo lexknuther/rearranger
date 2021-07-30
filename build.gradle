@@ -21,8 +21,9 @@ intellij {
 
 patchPluginXml {
 	sinceBuild "201"
-	untilBuild "212"
+	untilBuild "213"
 	changeNotes """
+Version 6.0.7: added support for IntelliJ 2021.2<br/>
 Version 6.0.6: added support for IntelliJ 2020.1<br/>
 Version 6.0.5: switched to using patchPluginXml to control since-build and until-build<br/>
 Version 6.0.4: added support for IntelliJ 2020.3<br/>

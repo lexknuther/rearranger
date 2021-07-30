@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mil.navy.nrl.itd.rearranger'
-version '6.0.7'
+version '6.0.8-SNAPSHOT'
 
 repositories {
 	mavenCentral()

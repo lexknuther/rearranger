@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.jetbrains.intellij' version '0.4.18'
+	id 'org.jetbrains.intellij' version '1.5.2'
 }
 
 group 'mil.navy.nrl.itd.rearranger'
@@ -11,18 +11,18 @@ repositories {
 }
 
 dependencies {
-	testCompile group: 'junit', name: 'junit', version: '4.12'
+	testImplementation 'junit:junit:4.12'
 }
 
 intellij {
-	version '2021.1'
-	plugins 'java'
+	version = '2021.1'
+	plugins = ['java']
 }
 
 patchPluginXml {
-	sinceBuild "201"
-	untilBuild "213"
-	changeNotes """
+	sinceBuild = "201"
+	untilBuild = "213"
+	changeNotes = """
 Version 6.0.7: added support for IntelliJ 2021.2<br/>
 Version 6.0.6: added support for IntelliJ 2020.1<br/>
 Version 6.0.5: switched to using patchPluginXml to control since-build and until-build<br/>

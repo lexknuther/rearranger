@@ -1,7 +1,6 @@
 <idea-plugin>
 	<id>com.wrq.rearranger</id>
 	<name>Rearranger</name>
-	<version>6.0.2</version>
 	<vendor url="https://github.com/lexknuther/rearranger" email="enochs.brandon@gmail.com">Brandon Enochs</vendor>
 	<description><![CDATA[Rearranges (reorders) class and class member declarations according to a user-specified order and/or method call hierarchy;
 generates section-marking comments;

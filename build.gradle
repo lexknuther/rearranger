@@ -21,7 +21,7 @@ intellij {
 
 patchPluginXml {
 	sinceBuild = "201"
-	untilBuild = "214"
+	untilBuild = "222"
 	changeNotes = """
 Version 6.0.8: added support for IntelliJ 2022.1<br/>
 Version 6.0.7: added support for IntelliJ 2021.2<br/>

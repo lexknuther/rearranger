@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mil.navy.nrl.itd.rearranger'
-version '6.0.9-SNAPSHOT'
+version '6.0.11-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -15,14 +15,15 @@ dependencies {
 }
 
 intellij {
-	version = '2022.1'
+	version = '2022.2'
 	plugins = ['java']
 }
 
 patchPluginXml {
 	sinceBuild = "201"
-	untilBuild = "222"
+	untilBuild = "223"
 	changeNotes = """
+Version 6.0.10: added support for IntelliJ 2022.2<br/>
 Version 6.0.8: added support for IntelliJ 2022.1<br/>
 Version 6.0.7: added support for IntelliJ 2021.2<br/>
 Version 6.0.6: added support for IntelliJ 2020.1<br/>

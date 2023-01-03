@@ -22,6 +22,7 @@
 package com.wrq.rearranger.settings;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.wrq.rearranger.RearrangerImplementation;
 import com.wrq.rearranger.settings.attributeGroups.AttributeGroup;
@@ -45,13 +46,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Attribute;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.input.sax.SAXEngine;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 /**
  * Holds two lists of rearrangement settings, one for the outer level classes, the other for class members.  Each list
@@ -142,11 +138,10 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 	}
 
 	private static RearrangerSettings getSettingsFromStream(InputStream inputStream) {
-		Document document;
-		try {
-			SAXEngine builder = new SAXBuilder();
+		Element app;
 
-			document = builder.build(inputStream);
+		try {
+			app = JDOMUtil.load(inputStream);
 		} catch (JDOMException jde) {
 			logger.debug("JDOM exception building document:" + jde);
 			return null;
@@ -155,7 +150,6 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 			return null;
 		}
 
-		Element app = document.getRootElement();
 		Element component = null;
 
 		if (app.getName().equals("application")) {
@@ -846,10 +840,8 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 		Element r = new Element(RearrangerImplementation.COMPONENT_NAME);
 		component.getChildren().add(r);
 		writeExternal(r);
-		Format format = Format.getPrettyFormat();
-		XMLOutputter outputter = new XMLOutputter(format);
 		try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-			outputter.output(component, fileOutputStream);
+			JDOMUtil.write(component, fileOutputStream);
 		} catch (FileNotFoundException exception) {
 			throw new IllegalStateException(exception);
 		} catch (IOException exception) {

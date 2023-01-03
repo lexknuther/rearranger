@@ -23,6 +23,7 @@ patchPluginXml {
 	sinceBuild = "201"
 	untilBuild = "224"
 	changeNotes = """
+Version 6.0.12: fixed two deprecated API usages<br/>
 Version 6.0.11: added support for IntelliJ 2022.3<br/>
 Version 6.0.10: added support for IntelliJ 2022.2<br/>
 Version 6.0.8: added support for IntelliJ 2022.1<br/>

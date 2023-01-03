@@ -175,7 +175,7 @@ public class MethodSpec {
 		integerInstance.setMaximumIntegerDigits(2);
 		integerInstance.setMinimumIntegerDigits(1);
 		final JFormattedTextField intField = new JFormattedTextField(integerInstance);
-		intField.setValue(new Integer("88"));
+		intField.setValue(88);
 		final Dimension d = intField.getPreferredSize();
 		d.width += 3;
 		intField.setPreferredSize(d);

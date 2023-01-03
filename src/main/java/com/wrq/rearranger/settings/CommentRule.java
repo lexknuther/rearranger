@@ -633,7 +633,7 @@ public class CommentRule implements AttributeGroup, IPopupTreeRangeEntry, IFileP
 			integerInstance.setMaximumIntegerDigits(2);
 			integerInstance.setMinimumIntegerDigits(1);
 			anyAllPrevNumber = new JFormattedTextField(integerInstance);
-			anyAllPrevNumber.setValue(new Integer("88"));
+			anyAllPrevNumber.setValue(88);
 			d = anyAllPrevNumber.getPreferredSize();
 			d.width += 3;
 			anyAllPrevNumber.setPreferredSize(d);

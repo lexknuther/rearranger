@@ -204,7 +204,7 @@ public abstract class SettingsPane {
 					if (rule instanceof IPrioritizableRule) {
 						int priority;
 						try {
-							priority = new Integer((String) aValue);
+							priority = Integer.parseInt((String) aValue);
 						} catch (NumberFormatException nfe) {
 							return;
 						}

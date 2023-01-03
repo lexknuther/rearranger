@@ -47,7 +47,7 @@ public class IntTextField
 		integerInstance.setMaximumIntegerDigits(maxDigits);
 		integerInstance.setMinimumIntegerDigits(1);
 		setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(integerInstance)));
-		setValue(maximum != null ? maximum : new Integer("88"));
+		setValue(maximum != null ? maximum : 88);
 		final Dimension d = getPreferredSize();
 		d.width += 3;
 		setPreferredSize(d);

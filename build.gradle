@@ -20,7 +20,7 @@ intellij {
 }
 
 patchPluginXml {
-	sinceBuild = "201"
+	sinceBuild = "222"
 	untilBuild = "224"
 	changeNotes = """
 Version 6.0.12: fixed two deprecated API usages<br/>

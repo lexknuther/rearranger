@@ -15,14 +15,15 @@ dependencies {
 }
 
 intellij {
-	version = '2022.3'
+	version = '2023.1'
 	plugins = ['java']
 }
 
 patchPluginXml {
 	sinceBuild = "222"
-	untilBuild = "224"
+	untilBuild = "232"
 	changeNotes = """
+Version 6.0.14: added support for IntelliJ 2023.1<br/>
 Version 6.0.13: limited the minimum version of IntelliJ IDEA to account for API usage changes in 6.0.12<br/>
 Version 6.0.12: fixed two deprecated API usages<br/>
 Version 6.0.11: added support for IntelliJ 2022.3<br/>

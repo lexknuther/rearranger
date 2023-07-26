@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.jetbrains.intellij' version '1.11.0'
+	id 'org.jetbrains.intellij' version '1.13.0'
 }
 
 group 'mil.navy.nrl.itd.rearranger'
@@ -15,14 +15,15 @@ dependencies {
 }
 
 intellij {
-	version = '2023.1'
+	version = '2023.2'
 	plugins = ['java']
 }
 
 patchPluginXml {
 	sinceBuild = "222"
-	untilBuild = "232"
+	untilBuild = "233"
 	changeNotes = """
+Version 6.0.15: added support for IntelliJ 2023.2<br/>
 Version 6.0.14: added support for IntelliJ 2023.1<br/>
 Version 6.0.13: limited the minimum version of IntelliJ IDEA to account for API usage changes in 6.0.12<br/>
 Version 6.0.12: fixed two deprecated API usages<br/>

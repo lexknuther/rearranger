@@ -15,14 +15,15 @@ dependencies {
 }
 
 intellij {
-	version = '2023.3'
+	version = '2024.1'
 	plugins = ['java']
 }
 
 patchPluginXml {
 	sinceBuild = "222"
-	untilBuild = "234"
+	untilBuild = "242"
 	changeNotes = """
+Version 6.0.17: added support for IntelliJ 2024.1<br/>
 Version 6.0.16: added support for IntelliJ 2023.3<br/>
 Version 6.0.15: added support for IntelliJ 2023.2<br/>
 Version 6.0.14: added support for IntelliJ 2023.1<br/>

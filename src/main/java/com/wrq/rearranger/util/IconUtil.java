@@ -23,12 +23,13 @@ package com.wrq.rearranger.util;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.wrq.rearranger.RearrangerImplementation;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 /**
  * Utility methods to obtain an icon from a resource or file.
@@ -49,8 +50,8 @@ public class IconUtil {
 					URLClassLoader cl = new URLClassLoader(
 							new URL[]
 									{
-											new File("/rearranger/lib/rearranger.jar").toURL(),
-											new File("/IntelliJ-IDEA-4.0/lib/icons.jar").toURL()
+											new File("/rearranger/lib/rearranger.jar").toURI().toURL(),
+											new File("/IntelliJ-IDEA-4.0/lib/icons.jar").toURI().toURL()
 									}
 					);
 					iconURL = cl.getResource("com/wrq/rearranger/" + iconName + ".png");

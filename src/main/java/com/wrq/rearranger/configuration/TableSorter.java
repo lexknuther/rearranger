@@ -35,19 +35,17 @@ package com.wrq.rearranger.configuration;
  * @author Philip Milne
  */
 
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class TableSorter extends TableMap {
 
@@ -133,7 +131,7 @@ public class TableSorter extends TableMap {
 				int viewColumn = columnModel.getColumnIndexAtX(e.getX());
 				int column = tableView.convertColumnIndexToModel(viewColumn);
 				if (e.getClickCount() == 1 && column != -1) {
-					int shiftPressed = e.getModifiers() & InputEvent.SHIFT_MASK;
+					int shiftPressed = e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK;
 					boolean ascending = defaultSortOrderAscending(column) ^ shiftPressed != 0;
 					sorter.sortByColumn(column, ascending);
 				}

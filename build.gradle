@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mil.navy.nrl.itd.rearranger'
-version '6.0.17'
+version '6.0.18-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -15,14 +15,14 @@ dependencies {
 }
 
 intellij {
-	version = '2024.1'
+	version = '2024.2.1'
 	plugins = ['java']
 }
 
 patchPluginXml {
 	sinceBuild = "222"
-	untilBuild = "242"
 	changeNotes = """
+Version 6.0.18: added support for IntelliJ 2024.4<br/>
 Version 6.0.17: added support for IntelliJ 2024.1<br/>
 Version 6.0.16: added support for IntelliJ 2023.3<br/>
 Version 6.0.15: added support for IntelliJ 2023.2<br/>

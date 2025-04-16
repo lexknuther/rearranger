@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij.platform' version '2.1.0'
+    id 'org.jetbrains.intellij.platform' version '2.5.0'
 }
 
 group 'mil.navy.nrl.itd.rearranger'
-version '6.0.19'
+version '6.0.20-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -16,16 +16,20 @@ repositories {
 dependencies {
     testImplementation 'junit:junit:4.12'
     intellijPlatform {
-       intellijIdeaCommunity('2024.3')
+       intellijIdeaCommunity('2025.1')
         bundledPlugin 'com.intellij.java'
         instrumentationTools()
      }
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
 patchPluginXml {
     sinceBuild = "222"
-    untilBuild = "243.*"
     changeNotes = """
+Version 6.0.20: added support for IntelliJ 2025.1<br/>
 Version 6.0.19: added support for IntelliJ 2024.3<br/>
 Version 6.0.18: added support for IntelliJ 2024.2.4<br/>
 Version 6.0.17: added support for IntelliJ 2024.1<br/>

@@ -33,21 +33,19 @@ import com.wrq.rearranger.settings.attributeGroups.InnerClassAttributes;
 import com.wrq.rearranger.settings.attributeGroups.InterfaceAttributes;
 import com.wrq.rearranger.settings.attributeGroups.ItemAttributes;
 import com.wrq.rearranger.settings.attributeGroups.MethodAttributes;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Holds two lists of rearrangement settings, one for the outer level classes, the other for class members.  Each list
@@ -125,7 +123,7 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 
 	public static RearrangerSettings getDefaultSettings() {
 		URL settingsURL = RearrangerSettingsImplementation.class.getClassLoader().getResource(
-				"com/wrq/rearranger/defaultConfiguration.xml"
+			"com/wrq/rearranger/defaultConfiguration.xml"
 		);
 
 		assert settingsURL != null;
@@ -155,16 +153,16 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 		if (app.getName().equals("application")) {
 			for (Element child : app.getChildren()) {
 				if (child.getName().equals("component") &&
-						child.getAttribute("name") != null &&
-						child.getAttribute("name").getValue().equals(RearrangerImplementation.COMPONENT_NAME)) {
+					child.getAttribute("name") != null &&
+					child.getAttribute("name").getValue().equals(RearrangerImplementation.COMPONENT_NAME)) {
 					component = child;
 					break;
 				}
 			}
 		} else {
 			if (app.getName().equals("component") &&
-					app.getAttribute("name") != null &&
-					app.getAttribute("name").getValue().equals(RearrangerImplementation.COMPONENT_NAME)) {
+				app.getAttribute("name") != null &&
+				app.getAttribute("name").getValue().equals(RearrangerImplementation.COMPONENT_NAME)) {
 				component = app;
 			}
 		}
@@ -179,106 +177,6 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @param entry JDOM element named "Rearranger" which contains setting values as attributes.
-	 */
-	@Override
-	public void readExternal(Element entry) {
-		Element items = entry.getChild("Items");
-		Element classes = entry.getChild("Classes");
-		List<Element> itemList = items.getChildren();
-		List<Element> classList = classes.getChildren();
-
-		for (Element element : itemList) {
-			itemOrderAttributeList.add(ItemAttributes.readExternal(element));
-		}
-		for (Element element : classList) {
-			classOrderAttributeList.add(ClassAttributes.readExternal(element));
-		}
-
-		Element gsd = entry.getChild("DefaultGetterSetterDefinition");
-
-		defaultGSDefinition = GetterSetterDefinition.readExternal(gsd);
-
-		Element relatedItems = entry.getChild("RelatedMethods");
-
-		relatedMethodsSettings = RelatedMethodsSettings.readExternal(relatedItems);
-		keepGettersSettersTogether = getBooleanAttribute(entry, "KeepGettersSettersTogether", true);
-		keepGettersSettersWithProperty = getBooleanAttribute(entry, "KeepGettersSettersWithProperty", false);
-		keepOverloadedMethodsTogether = getBooleanAttribute(entry, "KeepOverloadedMethodsTogether", true);
-
-		Attribute attribute = getAttribute(entry, "globalCommentPattern");
-
-		askBeforeRearranging = getBooleanAttribute(entry, "ConfirmBeforeRearranging", false);
-		rearrangeInnerClasses = getBooleanAttribute(entry, "RearrangeInnerClasses", false);
-		globalCommentPattern = attribute == null ? "" : attribute.getValue();
-		overloadedOrder = getIntAttribute(entry, "overloadedOrder", OVERLOADED_ORDER_RETAIN_ORIGINAL);
-		showParameterTypes = getBooleanAttribute(entry, "ShowParameterTypes", true);
-		showParameterNames = getBooleanAttribute(entry, "ShowParameterNames", true);
-		showFields = getBooleanAttribute(entry, "ShowFields", true);
-		showRules = getBooleanAttribute(entry, "ShowRules", false);
-		showMatchedRules = getBooleanAttribute(entry, "ShowMatchedRules", false);
-		showComments = getBooleanAttribute(entry, "ShowComments", false);
-		showTypeAfterMethod = getBooleanAttribute(entry, "ShowTypeAfterMethod", true);
-		removeBlanksInsideCodeBlocks = getBooleanAttribute(entry, "RemoveBlanksInsideCodeBlocks", false);
-		afterClassLBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				false,
-				true,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"AfterClassLBrace"
-		);
-		afterClassRBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				false,
-				false,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"AfterClassRBrace"
-		);
-		beforeClassRBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				true,
-				false,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"BeforeClassRBrace"
-		);
-		beforeMethodLBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				true,
-				true,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"BeforeMethodLBrace"
-		);
-		afterMethodLBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				false,
-				true,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"AfterMethodLBrace"
-		);
-		afterMethodRBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				false,
-				false,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"AfterMethodRBrace"
-		);
-		beforeMethodRBrace = ForceBlankLineSetting.readExternal(
-				entry,
-				true,
-				false,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"BeforeMethodRBrace"
-		);
-		newlinesAtEOF = ForceBlankLineSetting.readExternal(
-				entry,
-				false,
-				false,
-				ForceBlankLineSetting.EOF_OBJECT,
-				"NewlinesAtEOF"
-		);
 	}
 
 	public static Attribute getAttribute(Element element, String attributeName) {
@@ -367,46 +265,46 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 		showComments = false;
 		removeBlanksInsideCodeBlocks = false;
 		afterClassLBrace = new ForceBlankLineSetting(
-				false,
-				true,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"AfterClassLBrace"
+			false,
+			true,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"AfterClassLBrace"
 		);
 		afterClassRBrace = new ForceBlankLineSetting(
-				false,
-				false,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"AfterClassRBrace"
+			false,
+			false,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"AfterClassRBrace"
 		);
 		beforeClassRBrace = new ForceBlankLineSetting(
-				true,
-				false,
-				ForceBlankLineSetting.CLASS_OBJECT,
-				"BeforeClassRBrace"
+			true,
+			false,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"BeforeClassRBrace"
 		);
 		beforeMethodLBrace = new ForceBlankLineSetting(
-				true,
-				true,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"BeforeMethodLBrace"
+			true,
+			true,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"BeforeMethodLBrace"
 		);
 		afterMethodLBrace = new ForceBlankLineSetting(
-				false,
-				true,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"AfterMethodLBrace"
+			false,
+			true,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"AfterMethodLBrace"
 		);
 		beforeMethodRBrace = new ForceBlankLineSetting(
-				true,
-				false,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"BeforeMethodRBrace"
+			true,
+			false,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"BeforeMethodRBrace"
 		);
 		afterMethodRBrace = new ForceBlankLineSetting(
-				false,
-				false,
-				ForceBlankLineSetting.METHOD_OBJECT,
-				"AfterMethodRBrace"
+			false,
+			false,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"AfterMethodRBrace"
 		);
 		newlinesAtEOF = new ForceBlankLineSetting(false, false, ForceBlankLineSetting.EOF_OBJECT, "NewlinesAtEOF");
 		defaultGSDefinition = new GetterSetterDefinition();
@@ -556,11 +454,11 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 	}
 
 	@XCollection(elementTypes = {
-			FieldAttributes.class,
-			MethodAttributes.class,
-			InnerClassAttributes.class,
-			InterfaceAttributes.class,
-			CommentRule.class
+		FieldAttributes.class,
+		MethodAttributes.class,
+		InnerClassAttributes.class,
+		InterfaceAttributes.class,
+		CommentRule.class
 	})
 	@Override
 	public List<AttributeGroup> getItemOrderAttributeList() {
@@ -595,11 +493,6 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 	@Override
 	public RelatedMethodsSettings getRelatedMethodsSettings() {
 		return relatedMethodsSettings;
-	}
-
-	@Override
-	public void setRelatedMethodsSettings(RelatedMethodsSettings value) {
-		relatedMethodsSettings = value.deepCopy();
 	}
 
 	@Override
@@ -743,34 +636,34 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 		RearrangerSettings other;
 
 		return value instanceof RearrangerSettings &&
-				getClassOrderAttributeList().equals((other = (RearrangerSettings) value).getClassOrderAttributeList()) &&
-				getAfterClassLBrace().equals(other.getAfterClassLBrace()) && //false
-				getAfterClassRBrace().equals(other.getAfterClassRBrace()) &&
-				getBeforeClassRBrace().equals(other.getBeforeClassRBrace()) && //false
-				getBeforeMethodLBrace().equals(other.getBeforeMethodLBrace()) && //false
-				getAfterMethodLBrace().equals(other.getAfterMethodLBrace()) && //false
-				getAfterMethodRBrace().equals(other.getAfterMethodRBrace()) && //false
-				getBeforeMethodRBrace().equals(other.getBeforeMethodRBrace()) && //false
-				getNewlinesAtEOF().equals(other.getNewlinesAtEOF()) && //false
-				getItemOrderAttributeList().equals(other.getItemOrderAttributeList()) && //false
-				getExtractedMethodsSettings().equals(other.getExtractedMethodsSettings()) &&
-				isKeepGettersSettersTogether() == other.isKeepGettersSettersTogether() &&
-				isKeepGettersSettersWithProperty() == other.isKeepGettersSettersWithProperty() &&
-				isKeepOverloadedMethodsTogether() == other.isKeepOverloadedMethodsTogether() &&
-				getOverloadedOrder() == other.getOverloadedOrder() &&
-				getGlobalCommentPattern() == other.getGlobalCommentPattern() &&
-				isAskBeforeRearranging() == other.isAskBeforeRearranging() &&
-				isRearrangeInnerClasses() == other.isRearrangeInnerClasses() &&
-				isShowParameterTypes() == other.isShowParameterTypes() &&
-				isShowParameterNames() == other.isShowParameterNames() &&
-				isShowFields() == other.isShowFields() &&
-				isShowTypeAfterMethod() == other.isShowTypeAfterMethod() &&
-				isShowRules() == other.isShowRules() &&
-				isShowMatchedRules() == other.isShowMatchedRules() &&
-				isShowComments() == other.isShowComments() &&
-				isShowParameterNames() == other.isShowParameterNames() &&
-				isRemoveBlanksInsideCodeBlocks() == other.isRemoveBlanksInsideCodeBlocks() &&
-				getDefaultGSDefinition().equals(other.getDefaultGSDefinition());
+			getClassOrderAttributeList().equals((other = (RearrangerSettings) value).getClassOrderAttributeList()) &&
+			getAfterClassLBrace().equals(other.getAfterClassLBrace()) && //false
+			getAfterClassRBrace().equals(other.getAfterClassRBrace()) &&
+			getBeforeClassRBrace().equals(other.getBeforeClassRBrace()) && //false
+			getBeforeMethodLBrace().equals(other.getBeforeMethodLBrace()) && //false
+			getAfterMethodLBrace().equals(other.getAfterMethodLBrace()) && //false
+			getAfterMethodRBrace().equals(other.getAfterMethodRBrace()) && //false
+			getBeforeMethodRBrace().equals(other.getBeforeMethodRBrace()) && //false
+			getNewlinesAtEOF().equals(other.getNewlinesAtEOF()) && //false
+			getItemOrderAttributeList().equals(other.getItemOrderAttributeList()) && //false
+			getExtractedMethodsSettings().equals(other.getExtractedMethodsSettings()) &&
+			isKeepGettersSettersTogether() == other.isKeepGettersSettersTogether() &&
+			isKeepGettersSettersWithProperty() == other.isKeepGettersSettersWithProperty() &&
+			isKeepOverloadedMethodsTogether() == other.isKeepOverloadedMethodsTogether() &&
+			getOverloadedOrder() == other.getOverloadedOrder() &&
+			getGlobalCommentPattern() == other.getGlobalCommentPattern() &&
+			isAskBeforeRearranging() == other.isAskBeforeRearranging() &&
+			isRearrangeInnerClasses() == other.isRearrangeInnerClasses() &&
+			isShowParameterTypes() == other.isShowParameterTypes() &&
+			isShowParameterNames() == other.isShowParameterNames() &&
+			isShowFields() == other.isShowFields() &&
+			isShowTypeAfterMethod() == other.isShowTypeAfterMethod() &&
+			isShowRules() == other.isShowRules() &&
+			isShowMatchedRules() == other.isShowMatchedRules() &&
+			isShowComments() == other.isShowComments() &&
+			isShowParameterNames() == other.isShowParameterNames() &&
+			isRemoveBlanksInsideCodeBlocks() == other.isRemoveBlanksInsideCodeBlocks() &&
+			getDefaultGSDefinition().equals(other.getDefaultGSDefinition());
 	}
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -780,6 +673,111 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 	@Override
 	public RelatedMethodsSettings getExtractedMethodsSettings() {
 		return relatedMethodsSettings;
+	}
+
+	@Override
+	public void setRelatedMethodsSettings(RelatedMethodsSettings value) {
+		relatedMethodsSettings = value.deepCopy();
+	}
+
+	/**
+	 * @param entry JDOM element named "Rearranger" which contains setting values as attributes.
+	 */
+	@Override
+	public void readExternal(Element entry) {
+		Element items = entry.getChild("Items");
+		Element classes = entry.getChild("Classes");
+		List<Element> itemList = items.getChildren();
+		List<Element> classList = classes.getChildren();
+
+		for (Element element : itemList) {
+			itemOrderAttributeList.add(ItemAttributes.readExternal(element));
+		}
+		for (Element element : classList) {
+			classOrderAttributeList.add(ClassAttributes.readExternal(element));
+		}
+
+		Element gsd = entry.getChild("DefaultGetterSetterDefinition");
+
+		defaultGSDefinition = GetterSetterDefinition.readExternal(gsd);
+
+		Element relatedItems = entry.getChild("RelatedMethods");
+
+		relatedMethodsSettings = RelatedMethodsSettings.readExternal(relatedItems);
+		keepGettersSettersTogether = getBooleanAttribute(entry, "KeepGettersSettersTogether", true);
+		keepGettersSettersWithProperty = getBooleanAttribute(entry, "KeepGettersSettersWithProperty", false);
+		keepOverloadedMethodsTogether = getBooleanAttribute(entry, "KeepOverloadedMethodsTogether", true);
+
+		Attribute attribute = getAttribute(entry, "globalCommentPattern");
+
+		askBeforeRearranging = getBooleanAttribute(entry, "ConfirmBeforeRearranging", false);
+		rearrangeInnerClasses = getBooleanAttribute(entry, "RearrangeInnerClasses", false);
+		globalCommentPattern = attribute == null ? "" : attribute.getValue();
+		overloadedOrder = getIntAttribute(entry, "overloadedOrder", OVERLOADED_ORDER_RETAIN_ORIGINAL);
+		showParameterTypes = getBooleanAttribute(entry, "ShowParameterTypes", true);
+		showParameterNames = getBooleanAttribute(entry, "ShowParameterNames", true);
+		showFields = getBooleanAttribute(entry, "ShowFields", true);
+		showRules = getBooleanAttribute(entry, "ShowRules", false);
+		showMatchedRules = getBooleanAttribute(entry, "ShowMatchedRules", false);
+		showComments = getBooleanAttribute(entry, "ShowComments", false);
+		showTypeAfterMethod = getBooleanAttribute(entry, "ShowTypeAfterMethod", true);
+		removeBlanksInsideCodeBlocks = getBooleanAttribute(entry, "RemoveBlanksInsideCodeBlocks", false);
+		afterClassLBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			false,
+			true,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"AfterClassLBrace"
+		);
+		afterClassRBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			false,
+			false,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"AfterClassRBrace"
+		);
+		beforeClassRBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			true,
+			false,
+			ForceBlankLineSetting.CLASS_OBJECT,
+			"BeforeClassRBrace"
+		);
+		beforeMethodLBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			true,
+			true,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"BeforeMethodLBrace"
+		);
+		afterMethodLBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			false,
+			true,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"AfterMethodLBrace"
+		);
+		afterMethodRBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			false,
+			false,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"AfterMethodRBrace"
+		);
+		beforeMethodRBrace = ForceBlankLineSetting.readExternal(
+			entry,
+			true,
+			false,
+			ForceBlankLineSetting.METHOD_OBJECT,
+			"BeforeMethodRBrace"
+		);
+		newlinesAtEOF = ForceBlankLineSetting.readExternal(
+			entry,
+			false,
+			false,
+			ForceBlankLineSetting.EOF_OBJECT,
+			"NewlinesAtEOF"
+		);
 	}
 
 	@Override
@@ -806,8 +804,8 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 		entry.getChildren().add(relatedItems);
 		entry.setAttribute("KeepGettersSettersTogether", Boolean.valueOf(keepGettersSettersTogether).toString());
 		entry.setAttribute(
-				"KeepGettersSettersWithProperty",
-				Boolean.valueOf(keepGettersSettersWithProperty).toString()
+			"KeepGettersSettersWithProperty",
+			Boolean.valueOf(keepGettersSettersWithProperty).toString()
 		);
 		entry.setAttribute("KeepOverloadedMethodsTogether", Boolean.valueOf(keepOverloadedMethodsTogether).toString());
 		entry.setAttribute("ConfirmBeforeRearranging", Boolean.valueOf(askBeforeRearranging).toString());
@@ -834,42 +832,8 @@ public class RearrangerSettingsImplementation implements RearrangerSettings {
 	}
 
 	@Override
-	public void writeSettingsToFile(File file) {
-		Element component = new Element("component");
-		component.setAttribute("name", RearrangerImplementation.COMPONENT_NAME);
-		Element r = new Element(RearrangerImplementation.COMPONENT_NAME);
-		component.getChildren().add(r);
-		writeExternal(r);
-		try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-			JDOMUtil.write(component, fileOutputStream);
-		} catch (FileNotFoundException exception) {
-			throw new IllegalStateException(exception);
-		} catch (IOException exception) {
-			throw new IllegalStateException(exception);
-		}
-	}
-
-	@Override
 	public RearrangerSettings deepCopy() {
 		return new RearrangerSettingsImplementation(this);
-	}
-
-// -------------------------- OTHER METHODS --------------------------
-
-	public void addClass(AttributeGroup ca, int index) {
-		if (classOrderAttributeList.size() < index) {
-			classOrderAttributeList.add(ca);
-		} else {
-			classOrderAttributeList.add(index, ca);
-		}
-	}
-
-	public void addItem(AttributeGroup ia, int index) {
-		if (itemOrderAttributeList.size() < index) {
-			itemOrderAttributeList.add(ia);
-		} else {
-			itemOrderAttributeList.add(index, ia);
-		}
 	}
 
 }

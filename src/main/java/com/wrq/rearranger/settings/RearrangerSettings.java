@@ -2,11 +2,9 @@ package com.wrq.rearranger.settings;
 
 import com.wrq.rearranger.settings.attributeGroups.AttributeGroup;
 import com.wrq.rearranger.settings.attributeGroups.GetterSetterDefinition;
-import java.io.File;
+import org.jdom.Element;
 
 import java.util.List;
-
-import org.jdom.Element;
 
 /**
  * @author brandon-enochs
@@ -130,8 +128,6 @@ public interface RearrangerSettings {
 	void readExternal(Element entry);
 
 	void writeExternal(Element entry);
-
-	void writeSettingsToFile(File file);
 
 	RearrangerSettings deepCopy();
 

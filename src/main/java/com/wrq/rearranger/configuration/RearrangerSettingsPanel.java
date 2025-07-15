@@ -29,18 +29,7 @@ import com.wrq.rearranger.settings.attributeGroups.AttributeGroup;
 import com.wrq.rearranger.settings.attributeGroups.RegexUtil;
 import com.wrq.rearranger.util.CommentUtil;
 import com.wrq.rearranger.util.Constraints;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -57,6 +46,16 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Code for top level configuration panel.
@@ -510,7 +509,6 @@ public class RearrangerSettingsPanel extends JPanel {
 		JButton clearConfig = new JButton("Clear configuration");
 		JButton loadDefaultConfig = new JButton("Load default configuration");
 		JButton readConfig = new JButton("Read configuration from file...");
-		JButton writeConfig = new JButton("Write configuration to file...");
 
 		clearConfig.addActionListener(event -> createSettingsPanel(new RearrangerSettingsImplementation()));
 		loadDefaultConfig.addActionListener(event -> {
@@ -533,23 +531,11 @@ public class RearrangerSettingsPanel extends JPanel {
 				}
 			}
 		});
-		writeConfig.addActionListener(event -> {
-			JFileChooser fc = new JFileChooser();
-			int returnVal = fc.showSaveDialog(null);
-
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-
-				settings.writeSettingsToFile(file);
-			}
-		});
 		gcPanel.add(clearConfig, constraints.weightedLastCol());
 		constraints.newRow();
 		gcPanel.add(loadDefaultConfig, constraints.weightedLastCol());
 		constraints.newRow();
 		gcPanel.add(readConfig, constraints.weightedLastCol());
-		constraints.newRow();
-		gcPanel.add(writeConfig, constraints.weightedLastCol());
 
 		// now create outer panel so that buttons aren't stretched across creation.
 		JPanel outerPanel = new JPanel(new GridBagLayout());
